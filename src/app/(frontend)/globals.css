@@ -1,0 +1,211 @@
+@import 'tailwindcss';
+
+/*
+ * Ayurveda Tahiti design tokens.
+ * Plum and saffron come from Eliane's existing logo; sand, sage and lagoon add calm.
+ */
+@theme {
+  --color-plum-950: #2a0b1c;
+  --color-plum-900: #3a0f27;
+  --color-plum-800: #4a1838;
+  --color-plum-700: #59173c;
+  --color-plum-500: #8a4a6b;
+  --color-plum-200: #e4cfd8;
+  --color-plum-100: #f2e7ec;
+
+  --color-saffron-600: #b97e2e;
+  --color-saffron-500: #d29a48;
+  --color-saffron-300: #e8c68c;
+  --color-saffron-100: #f7ead2;
+
+  --color-sand-50: #fcf9f4;
+  --color-sand-100: #f7f1e8;
+  --color-sand-200: #efe5d6;
+  --color-sand-300: #e2d3bd;
+
+  --color-sage-700: #4e5f4b;
+  --color-sage-500: #7f9179;
+  --color-sage-200: #d8e0d2;
+
+  --color-lagoon-700: #2d5d5a;
+  --color-lagoon-200: #cfe2de;
+
+  --color-ink: #2b1f22;
+  --color-ink-soft: #5c4c4e;
+
+  --font-display: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+  --font-sans: var(--font-manrope), 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --radius-arch: 999px 999px 28px 28px;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 96px;
+  }
+  body {
+    background: var(--color-sand-100);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: var(--color-saffron-300);
+    color: var(--color-plum-950);
+  }
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-saffron-500);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  a,
+  button,
+  [role='button'],
+  label[for],
+  select {
+    cursor: pointer;
+  }
+  img {
+    user-select: none;
+  }
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: 1320px;
+    margin-inline: auto;
+    padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+  .arch {
+    border-radius: var(--radius-arch);
+  }
+  /* Fine paper grain over the whole page, very subtle (no seams between sections). */
+  .grain {
+    position: relative;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.22;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0 0.2 0 0 0 .08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .prose-at {
+    font-size: 1.075rem;
+    line-height: 1.85;
+    color: var(--color-ink-soft);
+  }
+  .prose-at > * + * {
+    margin-top: 1.15em;
+  }
+  .prose-at h2 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    color: var(--color-plum-800);
+    margin-top: 1.8em;
+  }
+  .prose-at h3 {
+    font-size: 1.55rem;
+    color: var(--color-plum-800);
+    margin-top: 1.5em;
+  }
+  .prose-at a {
+    color: var(--color-plum-700);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--color-saffron-500);
+  }
+  .prose-at ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .prose-at ul li {
+    position: relative;
+    padding-left: 1.4em;
+  }
+  .prose-at ul li::before {
+    content: '';
+    position: absolute;
+    left: 0.2em;
+    top: 0.75em;
+    width: 0.4em;
+    height: 0.4em;
+    border-radius: 999px;
+    background: var(--color-saffron-500);
+  }
+  .prose-at blockquote {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-style: italic;
+    line-height: 1.35;
+    color: var(--color-plum-800);
+    border-left: 2px solid var(--color-saffron-500);
+    padding-left: 1.2em;
+  }
+  .prose-at img {
+    border-radius: 20px;
+  }
+  .field {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--color-sand-300);
+    background: var(--color-sand-50);
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    color: var(--color-ink);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-plum-500);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--color-plum-500) 18%, transparent);
+  }
+  .label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

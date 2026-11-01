@@ -1,0 +1,172 @@
+import { differenceInCalendarDays } from 'date-fns'
+import { Check, Minus } from 'lucide-react'
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+
+import { BookingWidget } from '@/components/booking/BookingWidget'
+import { Reveal } from '@/components/motion/primitives'
+import { RichText } from '@/components/site/RichText'
+import { SectionHeading } from '@/components/site/ui'
+import { Gallery, Itinerary, TripHero } from '@/components/trip/TripParts'
+import { formatEUR, formatXPF } from '@/lib/money'
+import { img, type Img } from '@/lib/payload'
+import { getOffering, seatsLeft, upcomingOccurrences } from '@/lib/queries'
+import { fmtDateOnly } from '@/lib/time'
+
+export const revalidate = 60
+type P = { params: Promise<{ slug: string }> }
+
+export async function generateMetadata({ params }: P): Promise<Metadata> {
+  const o = await getOffering((await params).slug)
+  if (!o) return {}
+  const og = img(o.seo?.image ?? o.image, 'card')
+  return { title: o.seo?.title || o.title, description: o.seo?.description || o.summary, openGraph: og ? { images: [{ url: og.url }] } : undefined }
+}
+
+export default async function TripPage({ params }: P) {
+  const o = await getOffering((await params).slug)
+  if (!o || o.kind !== 'voyage') notFound()
+  const occ = await upcomingOccurrences(o.id)
+  const [title, subtitle] = o.title.split(' · ')
+  const days = o.tripStart && o.tripEnd ? differenceInCalendarDays(new Date(o.tripEnd), new Date(o.tripStart)) + 1 : null
+  const nextOcc = occ[0]
+  const past = o.tripEnd ? new Date(o.tripEnd) < new Date() : false
+  const gallery = (o.gallery ?? []).map((g) => img(g.image, 'card')).filter(Boolean) as Img[]
+
+  const facts = [
+    o.tripStart && { k: 'Dates', v: `${fmtDateOnly(o.tripStart)} – ${o.tripEnd ? fmtDateOnly(o.tripEnd) : ''}` },
+    days && { k: 'Durée', v: `${days} jours` },
+    nextOcc && { k: 'Groupe', v: `${nextOcc.capacity} personnes max. · ${seatsLeft(nextOcc)} places` },
+    o.price && { k: 'Prix', v: formatXPF(o.price) },
+  ].filter(Boolean) as { k: string; v: string }[]
+
+  return (
+    <>
+      <TripHero image={img(o.image, 'hero')} title={title} subtitle={subtitle} kicker={o.kicker} />
+
+      <section className="relative z-10 -mt-px bg-plum-950 pb-16 text-sand-50">
+        <div className="container-x">
+          <dl className="grid grid-cols-2 gap-6 border-t border-sand-50/15 pt-8 md:grid-cols-4">
+            {facts.map((f) => (
+              <div key={f.k}>
+                <dt className="eyebrow text-[0.64rem] text-saffron-300">{f.k}</dt>
+                <dd className="font-display mt-2 text-xl leading-snug sm:text-2xl">{f.v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </section>
+
+      <section className="py-24 lg:py-32">
+        <div className="container-x grid gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)]">
+          <div>
+            <Reveal>
+              {o.guide && <p className="eyebrow text-saffron-600">{o.guide}</p>}
+              <p className="font-display mt-6 text-[clamp(1.9rem,3.4vw,2.9rem)] leading-[1.2] text-plum-800">{o.summary}</p>
+            </Reveal>
+            <div className="mt-10 max-w-2xl">
+              <RichText data={o.description} />
+            </div>
+            {(o.highlights?.length ?? 0) > 0 && (
+              <ul className="mt-12 space-y-4">
+                {o.highlights!.map((h, i) => (
+                  <Reveal as="li" key={h.id} delay={i * 0.05} className="flex items-start gap-5 border-b border-plum-800/10 pb-4">
+                    <span className="font-display text-2xl italic text-saffron-600">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="pt-1.5 text-lg text-ink">{h.text}</span>
+                  </Reveal>
+                ))}
+              </ul>
+            )}
+          </div>
+          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start" id="reserver" aria-label="Réservation du voyage">
+            <div className="mb-5">
+              <p className="font-display text-4xl text-plum-800">{o.price ? formatXPF(o.price) : ''}</p>
+              <p className="text-sm text-ink-soft">{o.price ? formatEUR(o.price) : ''}{o.priceNote ? ` · ${o.priceNote}` : ''}</p>
+              {o.depositPercent ? <p className="mt-2 text-sm text-sage-700">Acompte de {o.depositPercent} % à la réservation, solde {o.balanceDueDaysBefore ? `${o.balanceDueDaysBefore} jours avant le départ` : 'avant le départ'}.</p> : null}
+            </div>
+            {o.bookingMode === 'closed' || past ? (
+              <div className="rounded-[28px] bg-sand-50 p-7">
+                <p className="font-display text-2xl text-plum-800">{past ? 'Ce voyage a eu lieu.' : 'Inscriptions closes.'}</p>
+                <p className="mt-2 text-ink-soft">Inscrivez-vous à la newsletter pour connaître les prochains départs, ou écrivez à Eliane.</p>
+              </div>
+            ) : (
+              <BookingWidget
+                offering={{
+                  slug: o.slug!,
+                  kind: o.kind,
+                  title: title,
+                  price: o.price,
+                  priceOptions: o.priceOptions?.map((p) => ({ label: p.label, price: p.price })),
+                  extras: o.extras?.map((x) => ({ label: x.label, price: x.price, description: x.description })),
+                  maxPerBooking: o.maxPerBooking,
+                  depositPercent: o.depositPercent,
+                  bookingMode: o.bookingMode,
+                  cancellationPolicy: o.cancellationPolicy,
+                }}
+                occurrences={occ.map((x) => ({ id: x.id, startsAt: x.startsAt, endsAt: x.endsAt, seatsLeft: x.status === 'open' ? seatsLeft(x) : 0, priceOverride: x.priceOverride }))}
+              />
+            )}
+          </aside>
+        </div>
+      </section>
+
+      {(o.itinerary?.length ?? 0) > 0 && (
+        <section className="bg-sand-50 py-24 lg:py-32" aria-labelledby="itin">
+          <div className="container-x grid gap-16 lg:grid-cols-[0.6fr_1fr]">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <SectionHeading id="itin" eyebrow="Itinéraire à partir de Delhi" title="Jour" accent="après jour" intro="Un rythme pensé pour vivre chaque lieu de l’intérieur : pratiques le matin, rencontres et silence." />
+            </div>
+            <Itinerary days={o.itinerary!.map((d) => ({ day: d.day, title: d.title, text: d.text }))} />
+          </div>
+        </section>
+      )}
+
+      {gallery.length > 0 && (
+        <section className="py-24 lg:py-32" aria-label="Photos">
+          <div className="container-x">
+            <SectionHeading eyebrow="En images" title="L’Inde" accent="telle qu’on la vit" />
+            <div className="mt-12">
+              <Gallery images={gallery} />
+            </div>
+          </div>
+        </section>
+      )}
+
+      {o.presentationUrl && (
+        <section className="pb-24">
+          <div className="container-x">
+            <p className="eyebrow mb-6 text-saffron-600">Présentation interactive</p>
+            <div className="relative aspect-video overflow-hidden rounded-[28px] bg-sand-200">
+              <iframe src={o.presentationUrl} title={`Présentation · ${o.title}`} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="bg-plum-900 py-24 text-sand-50 lg:py-28">
+        <div className="container-x grid gap-12 md:grid-cols-2">
+          {(o.included?.length ?? 0) > 0 && (
+            <div>
+              <h2 className="text-4xl">Le prix <em className="text-saffron-300">comprend</em></h2>
+              <ul className="mt-8 space-y-3">
+                {o.included!.map((x) => (
+                  <li key={x.id} className="flex gap-3 text-sand-200/90"><Check size={18} className="mt-1 shrink-0 text-saffron-300" />{x.text}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {(o.notIncluded?.length ?? 0) > 0 && (
+            <div>
+              <h2 className="text-4xl">Le prix <em className="text-saffron-300">ne comprend pas</em></h2>
+              <ul className="mt-8 space-y-3">
+                {o.notIncluded!.map((x) => (
+                  <li key={x.id} className="flex gap-3 text-sand-200/75"><Minus size={18} className="mt-1 shrink-0 text-sand-200/50" />{x.text}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+    </>
+  )
+}
