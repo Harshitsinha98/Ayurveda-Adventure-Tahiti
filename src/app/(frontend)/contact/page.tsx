@@ -34,7 +34,7 @@ export default async function ContactPage() {
           <ul className="mt-12 space-y-3">
             {items.map((i) => (
               <li key={i.label}>
-                <a href={i.href} target={i.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className="group flex items-center gap-5 rounded-[22px] border border-plum-800/10 px-5 py-4 transition hover:border-plum-800/30 hover:bg-sand-50">
+                <a href={i.href} target={i.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className="group flex items-center gap-5 rounded-[3px] border border-plum-800/10 px-5 py-4 transition hover:border-plum-800/30 hover:bg-sand-50">
                   <span className="grid h-11 w-11 place-items-center rounded-full bg-plum-100 text-plum-800">{i.icon}</span>
                   <span>
                     <span className="block text-xs uppercase tracking-[0.16em] text-ink-soft">{i.label}</span>
@@ -45,7 +45,7 @@ export default async function ContactPage() {
             ))}
           </ul>
         </Reveal>
-        <Reveal delay={0.1} className="rounded-[32px] bg-sand-50 p-7 shadow-[0_40px_80px_-60px_rgba(42,11,28,0.5)] sm:p-10">
+        <Reveal delay={0.1} className="rounded-[3px] bg-sand-50 p-7 shadow-[0_40px_80px_-60px_rgba(42,11,28,0.5)] sm:p-10">
           <p className="font-display mb-6 text-3xl text-plum-800">Envoyer un message</p>
           <ContactForm />
         </Reveal>

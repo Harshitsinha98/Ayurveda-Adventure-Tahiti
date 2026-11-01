@@ -27,7 +27,7 @@ export function ContactForm({ offering, subject }: { offering?: string; subject?
   return (
     <AnimatePresence mode="wait">
       {state === 'done' ? (
-        <motion.div key="ok" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-[24px] bg-sage-200/60 p-8" role="status">
+        <motion.div key="ok" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-[3px] bg-sage-200/60 p-8" role="status">
           <p className="font-display text-3xl text-plum-800">Merci, votre message est bien parti.</p>
           <p className="mt-2 text-ink-soft">Eliane vous répond en général sous 48 h (heure de Tahiti).</p>
         </motion.div>
@@ -55,7 +55,7 @@ export function ContactForm({ offering, subject }: { offering?: string; subject?
           </div>
           <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden />
           <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
-            <button disabled={state === 'sending'} className="inline-flex items-center gap-2 rounded-full bg-plum-800 px-7 py-3.5 text-sm font-semibold text-sand-50 transition hover:bg-plum-700 disabled:opacity-60">
+            <button disabled={state === 'sending'} className="inline-flex items-center gap-2 rounded-[2px] bg-plum-800 px-7 py-3.5 text-sm font-semibold text-sand-50 transition hover:bg-plum-700 disabled:opacity-60">
               {state === 'sending' ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
               Envoyer
             </button>

@@ -11,6 +11,8 @@ import { Parallax, Reveal, ScrollWords } from '@/components/motion/primitives'
 import { PostCard, SectionHeading } from '@/components/site/ui'
 import { formatXPF } from '@/lib/money'
 import { img, payloadClient } from '@/lib/payload'
+import { offeringPhoto, photo, TRIP_GALLERY } from '@/lib/photos'
+import { home as homeDefaults } from '../../../scripts/seed-data'
 import { durationLabel, KIND_LABEL, listOfferings, listPosts, MODE_LABEL, postCardProps, priceLabel, seatsLeft, upcomingOccurrences } from '@/lib/queries'
 import type { Offering } from '@/payload-types'
 
@@ -31,17 +33,18 @@ export default async function HomePage() {
   const tripOcc = trip ? occurrences.find((o) => (o.offering as Offering).id === trip.id) : undefined
   const accent = services.find((s) => s.slug === 'seance-individuelle-en-ligne')
 
-  const pillars = home.pillars ?? []
-  const ritualImage = img(home.ritual?.image, 'hero')
+  const pillars = home.pillars?.length ? home.pillars : homeDefaults.pillars
+  const ritualImage = img(home.ritual?.image, 'hero') ?? photo('puja-gange')
+  const ritual = { title: home.ritual?.title || homeDefaults.ritual.title, text: home.ritual?.text || homeDefaults.ritual.text }
 
   return (
     <>
       <Hero
-        eyebrow={home.eyebrow}
-        lines={(home.headline ?? []).map((h) => h.line)}
-        intro={home.intro}
-        image={img(home.heroImage, 'hero')}
-        accent={img(accent?.image, 'thumb')}
+        eyebrow={home.eyebrow || homeDefaults.eyebrow}
+        lines={home.headline?.length ? home.headline.map((h) => h.line) : homeDefaults.headline}
+        intro={home.intro || homeDefaults.intro}
+        image={img(home.heroImage, 'hero') ?? photo('eliane-gange')}
+        accent={img(accent?.image, 'thumb') ?? photo('bouddha-bougie')}
       />
 
       {/* Manifesto */}
@@ -52,12 +55,12 @@ export default async function HomePage() {
             <p className="font-display mt-4 text-2xl italic text-sage-700">Comment veux-tu la vivre ?</p>
           </Reveal>
           <div>
-            {home.manifesto && <ScrollWords text={home.manifesto} className="font-display text-[clamp(1.9rem,3.6vw,3.3rem)] leading-[1.22] text-plum-800" />}
-            {home.manifestoAside && (
+            {(home.manifesto || homeDefaults.manifesto) && <ScrollWords text={home.manifesto || homeDefaults.manifesto} className="font-display text-[clamp(1.9rem,3.6vw,3.3rem)] leading-[1.22] text-plum-800" />}
+            {(home.manifestoAside || homeDefaults.manifestoAside) && (
               <Reveal delay={0.1}>
                 <p className="mt-12 flex items-center gap-5 text-lg text-ink-soft">
                   <span aria-hidden className="h-px w-16 bg-saffron-500" />
-                  {home.manifestoAside}
+                  {home.manifestoAside || homeDefaults.manifestoAside}
                 </p>
               </Reveal>
             )}
@@ -72,20 +75,20 @@ export default async function HomePage() {
         <div className="container-x grid items-center gap-16 lg:grid-cols-2">
           {ritualImage && (
             <Reveal className="relative">
-              <Parallax className="aspect-[4/5] rounded-[32px]" amount={50}>
+              <Parallax className="aspect-[4/5] rounded-[3px]" amount={50}>
                 <Image src={ritualImage.url} alt={ritualImage.alt} fill sizes="(min-width:1024px) 45vw, 100vw" className="object-cover" />
               </Parallax>
-              <div className="absolute -bottom-8 right-6 rounded-[22px] bg-plum-800 px-7 py-6 text-sand-50 shadow-xl sm:right-[-2rem]">
+              <div className="absolute -bottom-8 right-6 rounded-[3px] bg-plum-800 px-7 py-6 text-sand-50 shadow-xl sm:right-[-2rem]">
                 <p className="font-display text-5xl leading-none text-saffron-300">20</p>
                 <p className="mt-1 max-w-[11rem] text-sm text-sand-200/85">minutes après le réveil qui changent toute la journée</p>
               </div>
             </Reveal>
           )}
           <div>
-            <SectionHeading id="ritual-title" eyebrow="L’art de vivre ayurvédique" title={home.ritual?.title || ''} intro={home.ritual?.text || undefined} />
+            <SectionHeading id="ritual-title" eyebrow="L’art de vivre ayurvédique" title={ritual.title} intro={ritual.text} />
             <ol className="mt-12 grid grid-cols-2 gap-x-8 gap-y-2 sm:grid-cols-3">
               {pillars.map((p, i) => (
-                <Reveal as="li" key={p.id ?? i} delay={i * 0.06} className="group border-t border-plum-800/12 py-5">
+                <Reveal as="li" key={('id' in p && p.id) || i} delay={i * 0.06} className="group border-t border-plum-800/12 py-5">
                   <span className="font-display text-sm italic text-saffron-600">{String(i + 1).padStart(2, '0')}</span>
                   <p className="font-display mt-1 text-2xl text-plum-800 transition-transform duration-500 group-hover:translate-x-1">{p.title}</p>
                   {p.text && <p className="mt-1 text-sm leading-snug text-ink-soft">{p.text}</p>}
@@ -114,7 +117,7 @@ export default async function HomePage() {
               kicker: o.kicker,
               price: priceLabel(o),
               meta: [KIND_LABEL[o.kind], MODE_LABEL[o.mode ?? ''], durationLabel(o.durationMinutes)].filter(Boolean).join(' · '),
-              image: img(o.image, 'card'),
+              image: img(o.image, 'card') ?? offeringPhoto(o.slug),
             }))}
           />
         </div>
@@ -130,7 +133,7 @@ export default async function HomePage() {
           price={trip.price ? formatXPF(trip.price) : null}
           daysLeft={trip.tripStart ? differenceInCalendarDays(new Date(trip.tripStart), new Date()) : null}
           seatsLeft={tripOcc ? seatsLeft(tripOcc) : null}
-          images={[img(trip.image, 'card'), ...(trip.gallery ?? []).slice(0, 2).map((g) => img(g.image, 'card'))].filter(Boolean) as never}
+          images={[img(trip.image, 'card') ?? offeringPhoto(trip.slug), ...((trip.gallery ?? []).length ? (trip.gallery ?? []).slice(0, 2).map((g) => img(g.image, 'card')) : (TRIP_GALLERY[trip.slug!] ?? []).slice(0, 2).map((n) => photo(n)))].filter(Boolean) as never}
         />
       )}
 
@@ -166,8 +169,6 @@ export default async function HomePage() {
 
       {/* Closing invitation */}
       <section className="relative overflow-hidden py-28 text-center lg:py-40">
-        <div aria-hidden className="absolute left-1/2 top-1/2 h-[90vmin] w-[90vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-saffron-500/25" />
-        <div aria-hidden className="absolute left-1/2 top-1/2 h-[64vmin] w-[64vmin] -translate-x-1/2 -translate-y-1/2 rounded-full border border-plum-800/10" />
         <div className="container-x relative">
           <Reveal>
             <p className="eyebrow text-saffron-600">Tu es au bon endroit</p>
@@ -175,8 +176,8 @@ export default async function HomePage() {
               On ne peut pas toujours changer ce qui arrive. <em className="text-saffron-600">On peut changer la manière d’y répondre.</em>
             </h2>
             <div className="mt-12 flex flex-wrap justify-center gap-4">
-              <Link href="/offres/consultation-decouverte" className="rounded-full bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">Réserver un premier échange</Link>
-              <Link href="/contact" className="rounded-full border border-plum-800/25 px-8 py-4 font-semibold text-plum-800 transition hover:border-plum-800">Écrire à Eliane</Link>
+              <Link href="/offres/consultation-decouverte" className="rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">Réserver un premier échange</Link>
+              <Link href="/contact" className="rounded-[2px] border border-plum-800/25 px-8 py-4 font-semibold text-plum-800 transition hover:border-plum-800">Écrire à Eliane</Link>
             </div>
           </Reveal>
         </div>

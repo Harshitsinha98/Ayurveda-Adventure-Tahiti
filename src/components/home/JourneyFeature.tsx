@@ -49,12 +49,12 @@ export function JourneyFeature({
             </motion.div>
           )}
           {second && (
-            <motion.div style={{ y: b }} className="absolute bottom-[4%] right-0 h-[46%] w-[46%] overflow-hidden rounded-[26px] border-[6px] border-sand-100 shadow-[0_30px_60px_-30px_rgba(42,11,28,0.5)]">
+            <motion.div style={{ y: b }} className="absolute bottom-[4%] right-0 h-[46%] w-[46%] overflow-hidden rounded-[3px] border-[5px] border-sand-100 shadow-[0_30px_60px_-30px_rgba(42,11,28,0.5)]">
               <Image src={second.url} alt={second.alt} fill sizes="(min-width:1024px) 22vw, 45vw" className="object-cover" />
             </motion.div>
           )}
           {third && (
-            <motion.div style={{ y: c }} className="absolute bottom-[18%] left-0 h-32 w-32 overflow-hidden rounded-full border-[6px] border-sand-100">
+            <motion.div style={{ y: c }} className="absolute bottom-[18%] left-0 h-36 w-28 overflow-hidden rounded-[2px] border-[5px] border-sand-100">
               <Image src={third.url} alt={third.alt} fill sizes="128px" className="object-cover" />
             </motion.div>
           )}
@@ -91,11 +91,9 @@ export function JourneyFeature({
                 </div>
               )}
             </dl>
-            <Link href={`/voyage-en-inde/${slug}`} className="group mt-10 inline-flex items-center gap-3 rounded-full bg-plum-800 py-4 pl-7 pr-5 font-semibold text-sand-50 transition hover:bg-plum-700">
+            <Link href={`/voyage-en-inde/${slug}`} className="group mt-10 inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">
               Découvrir le voyage
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-sand-50/15 transition-transform duration-500 group-hover:translate-x-1">
-                <ArrowRight size={16} />
-              </span>
+              <ArrowRight size={16} strokeWidth={1.5} className="transition-transform duration-500 group-hover:translate-x-1" />
             </Link>
           </Reveal>
         </div>

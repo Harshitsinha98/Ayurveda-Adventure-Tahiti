@@ -145,7 +145,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
   const dayKeys = slots ? Object.keys(slots) : []
 
   return (
-    <div className="min-w-0 overflow-hidden rounded-[28px] border border-plum-800/10 bg-sand-50 shadow-[0_40px_80px_-50px_rgba(42,11,28,0.5)]">
+    <div className="min-w-0 overflow-hidden rounded-[3px] border border-plum-800/10 bg-sand-50 shadow-[0_40px_80px_-50px_rgba(42,11,28,0.5)]">
       <div className="flex items-center justify-between gap-4 border-b border-plum-800/10 px-6 py-5 sm:px-8">
         <div>
           <p className="eyebrow text-[0.65rem] text-saffron-600">Réserver</p>
@@ -196,7 +196,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                               setDay(k)
                               setSlot(null)
                             }}
-                            className={`flex min-w-[68px] flex-col items-center rounded-2xl border px-3 py-3 transition ${on ? 'border-plum-800 bg-plum-800 text-sand-50' : 'border-plum-800/12 bg-sand-100 text-plum-800 hover:border-plum-800/40'}`}
+                            className={`flex min-w-[68px] flex-col items-center rounded-[3px] border px-3 py-3 transition ${on ? 'border-plum-800 bg-plum-800 text-sand-50' : 'border-plum-800/12 bg-sand-100 text-plum-800 hover:border-plum-800/40'}`}
                           >
                             <span className="text-[0.68rem] uppercase tracking-[0.12em] opacity-80">{fmt(d.toISOString(), { weekday: 'short' })}</span>
                             <span className="font-display text-2xl leading-tight">{fmt(d.toISOString(), { day: 'numeric' })}</span>
@@ -215,7 +215,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                             role="option"
                             aria-selected={on}
                             onClick={() => setSlot(s)}
-                            className={`rounded-xl border px-2 py-2.5 text-sm font-semibold transition ${on ? 'border-saffron-500 bg-saffron-100 text-plum-900' : 'border-plum-800/12 text-plum-800 hover:border-plum-800/40'}`}
+                            className={`rounded-[3px] border px-2 py-2.5 text-sm font-semibold transition ${on ? 'border-saffron-500 bg-saffron-100 text-plum-900' : 'border-plum-800/12 text-plum-800 hover:border-plum-800/40'}`}
                           >
                             {fmt(s.start, { hour: '2-digit', minute: '2-digit' })}
                           </button>
@@ -251,7 +251,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                           setQty(1)
                         }}
                         aria-pressed={on}
-                        className={`flex w-full items-center justify-between gap-4 rounded-2xl border px-5 py-4 text-left transition disabled:cursor-not-allowed disabled:opacity-50 ${on ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12 hover:border-plum-800/40'}`}
+                        className={`flex w-full items-center justify-between gap-4 rounded-[3px] border px-5 py-4 text-left transition disabled:cursor-not-allowed disabled:opacity-50 ${on ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12 hover:border-plum-800/40'}`}
                       >
                         <span>
                           <span className="font-display block text-xl text-plum-800">
@@ -282,7 +282,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                       {[{ label: 'Tarif normal', price: occ?.priceOverride ?? offering.price ?? 0 }, ...offering.priceOptions!].map((p, i) => {
                         const v = i === 0 ? null : i - 1
                         return (
-                          <label key={p.label} className={`flex items-center justify-between rounded-2xl border px-4 py-3 ${priceOption === v ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12'}`}>
+                          <label key={p.label} className={`flex items-center justify-between rounded-[3px] border px-4 py-3 ${priceOption === v ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12'}`}>
                             <span className="flex items-center gap-3">
                               <input type="radio" name="price" checked={priceOption === v} onChange={() => setPriceOption(v)} className="accent-plum-800" />
                               {p.label}
@@ -299,7 +299,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                     <legend className="label">Options</legend>
                     <div className="space-y-2">
                       {offering.extras!.map((x, i) => (
-                        <label key={x.label} className={`flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 ${extras.includes(i) ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12'}`}>
+                        <label key={x.label} className={`flex items-center justify-between gap-4 rounded-[3px] border px-4 py-3 ${extras.includes(i) ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12'}`}>
                           <span className="flex items-center gap-3">
                             <input type="checkbox" checked={extras.includes(i)} onChange={(e) => setExtras((v) => (e.target.checked ? [...v, i] : v.filter((k) => k !== i)))} className="accent-plum-800" />
                             <span>
@@ -364,7 +364,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
 
             {stepName === 'Confirmation' && (
               <div className="space-y-6">
-                <div className="rounded-2xl bg-sand-100 p-5 text-sm">
+                <div className="rounded-[3px] bg-sand-100 p-5 text-sm">
                   <p className="font-display text-xl text-plum-800">{offering.title}</p>
                   <p className="mt-1 text-ink-soft">
                     {slot ? fmt(slot.start, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : occ ? fmt(occ.startsAt, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''}
@@ -408,7 +408,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
         </AnimatePresence>
 
         {error && (
-          <p role="alert" className="mt-6 rounded-2xl bg-plum-100 px-4 py-3 text-sm text-plum-800">
+          <p role="alert" className="mt-6 rounded-[3px] bg-plum-100 px-4 py-3 text-sm text-plum-800">
             {error}
           </p>
         )}
@@ -424,7 +424,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
           <button
             type="submit"
             disabled={!canNext || submitting || (stepName === 'Date' && !isSeance && occurrences.length === 0)}
-            className="inline-flex items-center gap-3 rounded-full bg-plum-800 px-7 py-3.5 text-sm font-semibold text-sand-50 transition hover:bg-plum-700 disabled:cursor-not-allowed disabled:opacity-40"
+            className="inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-7 py-3.5 text-sm font-semibold text-sand-50 transition hover:bg-plum-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {submitting && <Loader2 size={16} className="animate-spin" />}
             {stepName === 'Confirmation'
@@ -444,7 +444,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
 
 function PayOption({ icon, title, text, on, onSelect }: { icon: React.ReactNode; title: string; text: string; on: boolean; onSelect: () => void }) {
   return (
-    <label className={`flex cursor-pointer items-start gap-4 rounded-2xl border px-4 py-4 transition ${on ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12 hover:border-plum-800/40'}`}>
+    <label className={`flex cursor-pointer items-start gap-4 rounded-[3px] border px-4 py-4 transition ${on ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12 hover:border-plum-800/40'}`}>
       <input type="radio" name="payment" checked={on} onChange={onSelect} className="sr-only" />
       <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${on ? 'bg-plum-800 text-sand-50' : 'bg-sand-200 text-plum-800'}`}>{icon}</span>
       <span>

@@ -10,6 +10,7 @@ import { SectionHeading } from '@/components/site/ui'
 import { Gallery, Itinerary, TripHero } from '@/components/trip/TripParts'
 import { formatEUR, formatXPF } from '@/lib/money'
 import { img, type Img } from '@/lib/payload'
+import { offeringPhoto, photo, TRIP_GALLERY } from '@/lib/photos'
 import { getOffering, seatsLeft, upcomingOccurrences } from '@/lib/queries'
 import { fmtDateOnly } from '@/lib/time'
 
@@ -31,7 +32,8 @@ export default async function TripPage({ params }: P) {
   const days = o.tripStart && o.tripEnd ? differenceInCalendarDays(new Date(o.tripEnd), new Date(o.tripStart)) + 1 : null
   const nextOcc = occ[0]
   const past = o.tripEnd ? new Date(o.tripEnd) < new Date() : false
-  const gallery = (o.gallery ?? []).map((g) => img(g.image, 'card')).filter(Boolean) as Img[]
+  const cmsGallery = (o.gallery ?? []).map((g) => img(g.image, 'card')).filter(Boolean) as Img[]
+  const gallery = cmsGallery.length ? cmsGallery : ((TRIP_GALLERY[o.slug!] ?? []).map((n) => photo(n)).filter(Boolean) as Img[])
 
   const facts = [
     o.tripStart && { k: 'Dates', v: `${fmtDateOnly(o.tripStart)} – ${o.tripEnd ? fmtDateOnly(o.tripEnd) : ''}` },
@@ -42,7 +44,7 @@ export default async function TripPage({ params }: P) {
 
   return (
     <>
-      <TripHero image={img(o.image, 'hero')} title={title} subtitle={subtitle} kicker={o.kicker} />
+      <TripHero image={img(o.image, 'hero') ?? offeringPhoto(o.slug)} title={title} subtitle={subtitle} kicker={o.kicker} />
 
       <section className="relative z-10 -mt-px bg-plum-950 pb-16 text-sand-50">
         <div className="container-x">
@@ -85,7 +87,7 @@ export default async function TripPage({ params }: P) {
               {o.depositPercent ? <p className="mt-2 text-sm text-sage-700">Acompte de {o.depositPercent} % à la réservation, solde {o.balanceDueDaysBefore ? `${o.balanceDueDaysBefore} jours avant le départ` : 'avant le départ'}.</p> : null}
             </div>
             {o.bookingMode === 'closed' || past ? (
-              <div className="rounded-[28px] bg-sand-50 p-7">
+              <div className="rounded-[3px] bg-sand-50 p-7">
                 <p className="font-display text-2xl text-plum-800">{past ? 'Ce voyage a eu lieu.' : 'Inscriptions closes.'}</p>
                 <p className="mt-2 text-ink-soft">Inscrivez-vous à la newsletter pour connaître les prochains départs, ou écrivez à Eliane.</p>
               </div>
@@ -136,7 +138,7 @@ export default async function TripPage({ params }: P) {
         <section className="pb-24">
           <div className="container-x">
             <p className="eyebrow mb-6 text-saffron-600">Présentation interactive</p>
-            <div className="relative aspect-video overflow-hidden rounded-[28px] bg-sand-200">
+            <div className="relative aspect-video overflow-hidden rounded-[3px] bg-sand-200">
               <iframe src={o.presentationUrl} title={`Présentation · ${o.title}`} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
             </div>
           </div>

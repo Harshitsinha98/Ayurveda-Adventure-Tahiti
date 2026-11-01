@@ -22,8 +22,8 @@ export function Breath() {
   const [phase, setPhase] = useState(0)
   const [cycles, setCycles] = useState(0)
   const progress = useMotionValue(0)
-  const scale = useTransform(progress, [0, 1], [0.72, 1])
-  const glow = useTransform(progress, [0, 1], [0.25, 0.75])
+  const scale = useTransform(progress, [0, 1], [0.6, 1])
+  const glow = useTransform(progress, [0, 1], [0.3, 1])
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export function Breath() {
                   setRunning((r) => !r)
                   setPhase(0)
                 }}
-                className="inline-flex items-center gap-3 rounded-full bg-saffron-500 px-6 py-3.5 text-sm font-semibold text-plum-950 transition hover:bg-saffron-300"
+                className="inline-flex items-center gap-3 rounded-[2px] border border-saffron-300/60 px-6 py-3.5 text-sm font-semibold text-saffron-300 transition hover:bg-saffron-300 hover:text-plum-950"
               >
                 {running ? <Pause size={16} /> : <Play size={16} />}
                 {running ? 'Faire une pause' : 'Commencer'}
@@ -82,27 +82,16 @@ export function Breath() {
           </Reveal>
         </div>
 
-        <div className="relative mx-auto grid aspect-square w-full max-w-[460px] place-items-center">
-          {[0, 1, 2].map((i) => (
-            <motion.span
-              key={i}
-              aria-hidden
-              className="absolute inset-0 rounded-full border border-saffron-300/25"
-              animate={{ scale: [1, 1.08 + i * 0.05, 1], opacity: [0.35, 0.1, 0.35] }}
-              transition={{ duration: 7 + i * 2, repeat: Infinity, ease: 'easeInOut', delay: i }}
-            />
-          ))}
-          <motion.div
-            style={{ scale }}
-            className="relative grid aspect-square w-[78%] place-items-center rounded-full bg-[radial-gradient(circle_at_35%_30%,#f2d9a8,#d29a48_45%,#8a4a6b_100%)]"
-          >
-            <motion.div aria-hidden style={{ opacity: glow }} className="absolute inset-[-18%] -z-10 rounded-full bg-saffron-500/40 blur-3xl" />
-          </motion.div>
-          <div className="absolute text-center" aria-live="polite">
+        <div className="relative mx-auto grid aspect-square w-full max-w-[440px] place-items-center">
+          <span aria-hidden className="absolute inset-0 rounded-full border border-sand-50/10" />
+          <span aria-hidden className="absolute inset-[12%] rounded-full border border-sand-50/10" />
+          <motion.span aria-hidden style={{ scale }} className="absolute inset-[4%] rounded-full border border-saffron-300/70" />
+          <motion.span aria-hidden style={{ scale, opacity: glow }} className="absolute inset-[4%] rounded-full bg-[radial-gradient(circle,rgba(232,198,140,0.22),rgba(232,198,140,0)_70%)]" />
+          <div className="relative text-center" aria-live="polite">
             <AnimatePresence mode="wait">
-              <motion.div key={running ? current.label : 'idle'} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.5 }}>
-                <p className="font-display text-5xl text-plum-950">{running ? current.label : 'Prêt·e ?'}</p>
-                <p className="mt-1 text-sm text-plum-900/80">{running ? current.hint : 'Installe-toi confortablement'}</p>
+              <motion.div key={running ? current.label : 'idle'} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.6 }}>
+                <p className="font-display text-5xl text-sand-50">{running ? current.label : 'Prêt·e ?'}</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.24em] text-saffron-300/80">{running ? current.hint : 'Installe-toi confortablement'}</p>
               </motion.div>
             </AnimatePresence>
           </div>

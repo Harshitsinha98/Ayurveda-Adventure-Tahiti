@@ -34,10 +34,10 @@ export function NewsletterForm({ tone = 'dark', source = 'footer' }: { tone?: 'd
         <motion.form key="form" onSubmit={onSubmit} exit={{ opacity: 0 }} className="space-y-3" noValidate>
           <div className="flex flex-col gap-3 sm:flex-row">
             <label className="sr-only" htmlFor={`nl-name-${source}`}>Prénom</label>
-            <input id={`nl-name-${source}`} name="firstName" autoComplete="given-name" placeholder="Prénom" className={`h-12 rounded-full px-5 text-base sm:w-40 ${dark ? 'border border-sand-50/20 bg-sand-50/5 text-sand-50 placeholder:text-sand-200/60' : 'field'}`} />
+            <input id={`nl-name-${source}`} name="firstName" autoComplete="given-name" placeholder="Prénom" className={`h-12 rounded-[2px] px-5 text-base sm:w-40 ${dark ? 'border border-sand-50/20 bg-sand-50/5 text-sand-50 placeholder:text-sand-200/60' : 'field'}`} />
             <label className="sr-only" htmlFor={`nl-email-${source}`}>Adresse e-mail</label>
-            <input id={`nl-email-${source}`} name="email" type="email" required autoComplete="email" placeholder="ton@email.com" className={`h-12 flex-1 rounded-full px-5 text-base ${dark ? 'border border-sand-50/20 bg-sand-50/5 text-sand-50 placeholder:text-sand-200/60' : 'field'}`} />
-            <button disabled={state === 'loading'} className={`h-12 rounded-full px-6 text-sm font-semibold transition ${dark ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'} disabled:opacity-60`}>
+            <input id={`nl-email-${source}`} name="email" type="email" required autoComplete="email" placeholder="ton@email.com" className={`h-12 flex-1 rounded-[2px] px-5 text-base ${dark ? 'border border-sand-50/20 bg-sand-50/5 text-sand-50 placeholder:text-sand-200/60' : 'field'}`} />
+            <button disabled={state === 'loading'} className={`h-12 rounded-[2px] px-6 text-sm font-semibold transition ${dark ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'} disabled:opacity-60`}>
               {state === 'loading' ? 'Un instant…' : 'Je m’inscris'}
             </button>
           </div>

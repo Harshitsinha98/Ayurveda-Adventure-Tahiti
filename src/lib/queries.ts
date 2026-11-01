@@ -4,6 +4,7 @@ import type { Where } from 'payload'
 
 import { formatXPF } from '@/lib/money'
 import { img, payloadClient } from '@/lib/payload'
+import { postPhoto } from '@/lib/photos'
 import type { Occurrence, Offering, Package, Post } from '@/payload-types'
 
 export const KIND_LABEL: Record<string, string> = {
@@ -98,7 +99,7 @@ export const postCardProps = (p: Post) => ({
   href: `/blog/${p.slug}`,
   title: p.title,
   excerpt: p.excerpt,
-  image: img(p.cover, 'card'),
+  image: img(p.cover, 'card') ?? postPhoto(p.slug),
   date: p.publishedAt,
   category: (p.categories?.[0] as { title?: string } | undefined)?.title ?? null,
 })

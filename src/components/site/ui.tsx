@@ -58,7 +58,7 @@ export function PageHero({
           {intro && <p className={`mt-7 max-w-2xl text-lg leading-relaxed ${plum ? 'text-sand-200/80' : 'text-ink-soft'}`}>{intro}</p>}
         </Reveal>
         {image && (
-          <Reveal delay={0.15} className="relative hidden aspect-[4/5] max-h-[440px] w-full overflow-hidden rounded-[28px] lg:block">
+          <Reveal delay={0.15} className="relative hidden aspect-[4/5] max-h-[440px] w-full overflow-hidden rounded-[3px] lg:block">
             <Image src={image.url} alt={image.alt} fill priority sizes="30vw" className="object-cover" />
           </Reveal>
         )}
@@ -86,11 +86,11 @@ export function PostCard({
 }) {
   return (
     <Link href={href} className="group block">
-      <div className={`relative overflow-hidden rounded-[24px] bg-sand-200 ${large ? 'aspect-[4/3]' : 'aspect-[5/4]'}`}>
+      <div className={`relative overflow-hidden rounded-[3px] bg-sand-200 ${large ? 'aspect-[4/3]' : 'aspect-[5/4]'}`}>
         {image && (
           <Image src={image.url} alt={image.alt} fill sizes={large ? '(min-width:1024px) 50vw, 100vw' : '(min-width:1024px) 25vw, 100vw'} className="object-cover transition-transform duration-[1.4s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.06]" />
         )}
-        {category && <span className="absolute left-4 top-4 rounded-full bg-sand-50/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-plum-800 backdrop-blur">{category}</span>}
+        {category && <span className="absolute left-4 top-4 rounded-[2px] bg-sand-50/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-plum-800 backdrop-blur">{category}</span>}
       </div>
       <div className="mt-5">
         {date && <p className="text-xs uppercase tracking-[0.16em] text-ink-soft">{new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
@@ -108,5 +108,5 @@ export function Pill({ children, tone = 'sand' }: { children: React.ReactNode; t
     saffron: 'bg-saffron-100 text-saffron-600',
     plum: 'bg-plum-100 text-plum-800',
   }[tone]
-  return <span className={`inline-flex items-center rounded-full px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.12em] ${t}`}>{children}</span>
+  return <span className={`inline-flex items-center rounded-[2px] px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.12em] ${t}`}>{children}</span>
 }

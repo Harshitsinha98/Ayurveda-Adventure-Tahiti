@@ -115,7 +115,7 @@ export function Gallery({ images }: { images: Img[] }) {
             type="button"
             key={im.url}
             onClick={() => setI(k)}
-            className="group relative block w-full overflow-hidden rounded-[22px]"
+            className="group relative block w-full overflow-hidden rounded-[3px]"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-5%' }}

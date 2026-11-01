@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Parallax, Reveal } from '@/components/motion/primitives'
 import { RichText } from '@/components/site/RichText'
 import { img, payloadClient } from '@/lib/payload'
+import { photo } from '@/lib/photos'
 
 export const revalidate = 300
 export const metadata: Metadata = {
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
 export default async function AboutPage() {
   const payload = await payloadClient()
   const a = await payload.findGlobal({ slug: 'about', depth: 1 })
-  const portrait = img(a.portrait, 'hero')
+  const portrait = img(a.portrait, 'hero') ?? photo('eliane-portrait')
 
   return (
     <>
@@ -26,7 +27,7 @@ export default async function AboutPage() {
               <div className="arch relative aspect-[4/5] overflow-hidden">
                 <Image src={portrait.url} alt={portrait.alt} fill priority sizes="(min-width:1024px) 40vw, 100vw" className="object-cover" />
               </div>
-              <p className="font-display absolute -bottom-6 left-6 rounded-full bg-saffron-500 px-6 py-3 text-xl italic text-plum-950">À Tahiti depuis 22 ans</p>
+              <p className="font-display absolute -bottom-6 left-6 bg-plum-900 px-6 py-3 text-xl italic text-saffron-300">À Tahiti depuis 22 ans</p>
             </Reveal>
           )}
           <Reveal delay={0.1}>
@@ -56,11 +57,11 @@ export default async function AboutPage() {
                 return (
                   <Reveal key={c.id} delay={i * 0.08} className={i % 2 ? 'lg:mt-24' : ''}>
                     {im ? (
-                      <Parallax className={`relative aspect-[3/4] ${i % 2 ? 'rounded-[28px]' : 'arch'}`} amount={30}>
+                      <Parallax className={`relative aspect-[3/4] ${i % 2 ? 'rounded-[3px]' : 'arch'}`} amount={30}>
                         <Image src={im.url} alt={im.alt} fill sizes="(min-width:1024px) 25vw, 50vw" className="object-cover" />
                       </Parallax>
                     ) : (
-                      <div aria-hidden className={`relative grid aspect-[3/4] place-items-center overflow-hidden ${i % 2 ? 'rounded-[28px] bg-sage-200' : 'arch bg-plum-800'}`}>
+                      <div aria-hidden className={`relative grid aspect-[3/4] place-items-center overflow-hidden ${i % 2 ? 'rounded-[3px] bg-sage-200' : 'arch bg-plum-800'}`}>
                         <span className={`font-display text-[9rem] leading-none ${i % 2 ? 'text-sage-500/50' : 'text-saffron-300/40'}`}>{c.place.charAt(0)}</span>
                         <span className={`absolute inset-6 rounded-[inherit] border ${i % 2 ? 'border-sage-500/30' : 'border-saffron-300/25'}`} />
                       </div>
@@ -84,8 +85,8 @@ export default async function AboutPage() {
               {a.credentials!.map((c) => {
                 const b = img(c.badge, 'thumb')
                 return (
-                  <li key={c.id} className="flex items-center gap-4 rounded-full bg-sand-100 py-2 pl-2 pr-6">
-                    {b ? <Image src={b.url} alt="" width={52} height={52} className="rounded-full" /> : <span className="grid h-[52px] w-[52px] place-items-center rounded-full bg-plum-800 font-display text-xl text-saffron-300">ॐ</span>}
+                  <li key={c.id} className="flex items-center gap-4 border-l border-saffron-500 py-2 pl-5 pr-4">
+                    {b && <Image src={b.url} alt="" width={44} height={44} className="rounded-full" />}
                     <span className="text-sm font-semibold text-plum-800">{c.title}</span>
                   </li>
                 )
@@ -100,7 +101,7 @@ export default async function AboutPage() {
           <p className="font-display mx-auto max-w-3xl text-[clamp(2rem,4vw,3.4rem)] leading-tight text-plum-800">
             Bienvenue dans cet espace où les traditions se rencontrent, <em className="text-saffron-600">où le corps est écouté.</em>
           </p>
-          <Link href="/offres/consultation-decouverte" className="mt-10 inline-block rounded-full bg-plum-800 px-8 py-4 font-semibold text-sand-50 hover:bg-plum-700">Faire connaissance</Link>
+          <Link href="/offres/consultation-decouverte" className="mt-10 inline-block rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 hover:bg-plum-700">Faire connaissance</Link>
         </div>
       </section>
     </>

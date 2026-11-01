@@ -61,7 +61,7 @@ export function Testimonials({ items }: { items: T[] }) {
               {t.highlight && <p className="mt-6 max-w-2xl text-[0.98rem] leading-relaxed text-ink-soft">{t.quote}</p>}
             </blockquote>
             <figcaption className="mt-8 flex items-center gap-4">
-              <span className="grid h-12 w-12 place-items-center rounded-full bg-saffron-100 font-display text-xl text-plum-800">{t.name.charAt(0)}</span>
+              <span aria-hidden className="h-px w-10 bg-saffron-500" />
               <span>
                 <span className="block font-semibold text-plum-800">{t.name}</span>
                 {t.context && <span className="text-sm text-ink-soft">{t.context}</span>}

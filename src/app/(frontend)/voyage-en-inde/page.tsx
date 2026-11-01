@@ -7,6 +7,7 @@ import { Parallax, Reveal } from '@/components/motion/primitives'
 import { PageHero } from '@/components/site/ui'
 import { formatXPF } from '@/lib/money'
 import { img } from '@/lib/payload'
+import { offeringPhoto } from '@/lib/photos'
 import { listOfferings } from '@/lib/queries'
 
 export const revalidate = 120
@@ -32,14 +33,14 @@ export default async function VoyagesPage() {
       <section className="py-20 lg:py-28">
         <div className="container-x space-y-24 lg:space-y-32">
           {trips.map((t, i) => {
-            const image = img(t.image, 'hero')
+            const image = img(t.image, 'hero') ?? offeringPhoto(t.slug)
             const past = t.tripEnd ? new Date(t.tripEnd) < new Date() : false
             const [title, subtitle] = t.title.split(' · ')
             return (
               <article key={t.id} className={`grid items-center gap-10 lg:grid-cols-2 lg:gap-16 ${i % 2 ? 'lg:[&>*:first-child]:order-2' : ''}`}>
                 <Reveal>
                   <Link href={`/voyage-en-inde/${t.slug}`} className="group block">
-                    <Parallax className={`relative aspect-[5/4] ${i % 2 ? 'rounded-[32px]' : 'arch'}`} amount={40}>
+                    <Parallax className={`relative aspect-[5/4] ${i % 2 ? 'rounded-[3px]' : 'arch'}`} amount={40}>
                       {image && <Image src={image.url} alt={image.alt} fill sizes="(min-width:1024px) 50vw, 100vw" className={`object-cover ${past ? 'grayscale-[35%]' : ''}`} />}
                     </Parallax>
                   </Link>
@@ -53,7 +54,7 @@ export default async function VoyagesPage() {
                   <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-soft">{t.summary}</p>
                   {t.tripRegion && <p className="mt-4 text-sm uppercase tracking-[0.16em] text-sage-700">{t.tripRegion}</p>}
                   <div className="mt-8 flex flex-wrap items-center gap-6">
-                    <Link href={`/voyage-en-inde/${t.slug}`} className="group inline-flex items-center gap-3 rounded-full bg-plum-800 py-3.5 pl-6 pr-4 font-semibold text-sand-50 transition hover:bg-plum-700">
+                    <Link href={`/voyage-en-inde/${t.slug}`} className="group inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">
                       {past ? 'Revivre le voyage' : 'Programme et réservation'}
                       <ArrowUpRight size={18} className="transition-transform duration-500 group-hover:rotate-45" />
                     </Link>

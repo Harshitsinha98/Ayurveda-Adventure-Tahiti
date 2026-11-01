@@ -26,9 +26,9 @@ export default async function BlogPage({ searchParams }: P) {
       <section className="pb-28">
         <div className="container-x">
           <nav aria-label="Catégories" className="mb-12 flex flex-wrap gap-2">
-            <Link href="/blog" className={`rounded-full px-4 py-2 text-sm font-semibold transition ${!categorie ? 'bg-plum-800 text-sand-50' : 'bg-sand-50 text-plum-800 hover:bg-plum-100'}`}>Tous</Link>
+            <Link href="/blog" className={`rounded-[2px] px-4 py-2 text-sm font-semibold transition ${!categorie ? 'bg-plum-800 text-sand-50' : 'bg-sand-50 text-plum-800 hover:bg-plum-100'}`}>Tous</Link>
             {cats.docs.map((c) => (
-              <Link key={c.id} href={`/blog?categorie=${c.slug}`} className={`rounded-full px-4 py-2 text-sm font-semibold transition ${categorie === c.slug ? 'bg-plum-800 text-sand-50' : 'bg-sand-50 text-plum-800 hover:bg-plum-100'}`}>
+              <Link key={c.id} href={`/blog?categorie=${c.slug}`} className={`rounded-[2px] px-4 py-2 text-sm font-semibold transition ${categorie === c.slug ? 'bg-plum-800 text-sand-50' : 'bg-sand-50 text-plum-800 hover:bg-plum-100'}`}>
                 {c.title}
               </Link>
             ))}

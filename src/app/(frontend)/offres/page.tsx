@@ -6,6 +6,7 @@ import { PackageCard } from '@/components/booking/PackageCard'
 import { Reveal } from '@/components/motion/primitives'
 import { PageHero, Pill, SectionHeading } from '@/components/site/ui'
 import { img } from '@/lib/payload'
+import { offeringPhoto, photo } from '@/lib/photos'
 import { durationLabel, KIND_LABEL, listOfferings, listPackages, MODE_LABEL, priceLabel } from '@/lib/queries'
 
 export const revalidate = 120
@@ -30,7 +31,7 @@ export default async function OffresPage() {
         title="Des espaces pour ralentir,"
         accent="se reconnecter."
         intro="Séances individuelles, enseignements en petits groupes ou conférences : à toi de choisir le format qui te correspond, en présentiel à Tahiti ou en ligne, sur les principes millénaires de l’Ayurveda et de la méditation."
-        image={img(offerings.find((o) => o.kind === 'formation')?.image, 'card')}
+        image={img(offerings.find((o) => o.kind === 'formation')?.image, 'card') ?? photo('meditation-groupe')}
       />
 
       {groups.map((g, gi) => {
@@ -42,12 +43,12 @@ export default async function OffresPage() {
               <SectionHeading title={g.title} accent={g.accent} />
               <div className={`mt-14 grid gap-8 ${items.length > 2 ? 'md:grid-cols-2 xl:grid-cols-4' : items.length === 2 ? 'md:grid-cols-2' : ''}`}>
                 {items.map((o, i) => {
-                  const image = img(o.image, 'card')
+                  const image = img(o.image, 'card') ?? offeringPhoto(o.slug)
                   const wide = items.length === 1
                   return (
                     <Reveal key={o.id} delay={i * 0.07}>
                       <Link href={`/offres/${o.slug}`} className={`group flex h-full flex-col ${wide ? 'md:grid md:grid-cols-[0.9fr_1.1fr] md:items-center md:gap-14' : ''}`}>
-                        <div className={`relative overflow-hidden bg-sand-200 ${wide ? 'aspect-[16/10] rounded-[28px]' : i % 2 === 0 ? 'arch aspect-[3/4]' : 'aspect-[3/4] rounded-[28px]'}`}>
+                        <div className={`relative overflow-hidden bg-sand-200 ${wide ? 'aspect-[16/10] rounded-[3px]' : i % 2 === 0 ? 'arch aspect-[3/4]' : 'aspect-[3/4] rounded-[3px]'}`}>
                           {image && <Image src={image.url} alt={image.alt} fill sizes="(min-width:1280px) 25vw, (min-width:768px) 50vw, 100vw" className="object-cover transition-transform duration-[1.4s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.06]" />}
                           <div className="absolute inset-x-4 bottom-4 flex flex-wrap gap-2">
                             <Pill tone="sand">{MODE_LABEL[o.mode ?? ''] ?? KIND_LABEL[o.kind]}</Pill>

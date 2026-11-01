@@ -41,7 +41,7 @@ export default async function BookingStatusPage({ params }: { params: Promise<{ 
         <h1 className="mt-5 text-[clamp(2.6rem,6vw,4.4rem)] leading-[1] text-plum-800">{s.title}</h1>
         <p className="mt-5 text-lg text-ink-soft">{s.text}</p>
 
-        <dl className="mt-12 divide-y divide-plum-800/10 rounded-[28px] bg-sand-50 px-7">
+        <dl className="mt-12 divide-y divide-plum-800/10 rounded-[3px] bg-sand-50 px-7">
           <Row k="Offre" v={o.title} />
           {when && <Row k="Date (heure de Tahiti)" v={fmtLong(when)} />}
           {when && b.timezone && b.timezone !== 'Pacific/Tahiti' && <Row k="Chez vous" v={fmtLong(when, b.timezone)} />}
@@ -57,9 +57,9 @@ export default async function BookingStatusPage({ params }: { params: Promise<{ 
 
         <div className="mt-10 flex flex-wrap gap-4">
           {b.status === 'expired' && (
-            <Link href={o.kind === 'voyage' ? `/voyage-en-inde/${o.slug}` : `/offres/${o.slug}`} className="rounded-full bg-plum-800 px-7 py-3.5 font-semibold text-sand-50 hover:bg-plum-700">Réserver à nouveau</Link>
+            <Link href={o.kind === 'voyage' ? `/voyage-en-inde/${o.slug}` : `/offres/${o.slug}`} className="rounded-[2px] bg-plum-800 px-7 py-3.5 font-semibold text-sand-50 hover:bg-plum-700">Réserver à nouveau</Link>
           )}
-          <Link href="/contact" className="rounded-full border border-plum-800/20 px-7 py-3.5 font-semibold text-plum-800">Modifier ou annuler : écrire à Eliane</Link>
+          <Link href="/contact" className="rounded-[2px] border border-plum-800/20 px-7 py-3.5 font-semibold text-plum-800">Modifier ou annuler : écrire à Eliane</Link>
         </div>
         {o.cancellationPolicy && <p className="mt-6 text-sm text-ink-soft">{o.cancellationPolicy}</p>}
       </div>

@@ -44,7 +44,7 @@ export function Header() {
         >
           <div className="container-x flex h-[76px] items-center justify-between gap-6">
             <Link href="/" className="group flex items-center gap-3" aria-label="Ayurveda Tahiti, accueil">
-              <Image src="/images/brand/emblem.png" alt="" width={44} height={44} priority className="rounded-full transition-transform duration-700 group-hover:rotate-[18deg]" />
+              <Image src="/images/brand/emblem.png" alt="" width={44} height={44} priority className="rounded-full" />
               <span className={`font-display text-[1.45rem] leading-none transition-colors ${onDark ? 'text-sand-50' : 'text-plum-800'}`}>
                 Ayurveda <em className="text-saffron-600">Tahiti</em>
               </span>
@@ -58,10 +58,10 @@ export function Header() {
                     key={n.href}
                     href={n.href}
                     aria-current={active ? 'page' : undefined}
-                    className={`relative rounded-full px-4 py-2 text-[0.92rem] transition-colors ${onDark ? (active ? 'text-plum-800' : 'text-sand-100 hover:text-saffron-300') : 'text-ink-soft hover:text-plum-800'}`}
+                    className={`relative px-4 py-2 text-[0.92rem] transition-colors ${onDark ? 'text-sand-100 hover:text-saffron-300' : 'text-ink-soft hover:text-plum-800'}`}
                   >
                     {active && (
-                      <motion.span layoutId="nav-pill" className="absolute inset-0 -z-10 rounded-full bg-plum-100" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                      <motion.span layoutId="nav-line" className={`absolute inset-x-4 -bottom-0.5 h-px ${onDark ? 'bg-saffron-300' : 'bg-plum-800'}`} transition={{ duration: 0.5, ease: EASE }} />
                     )}
                     {n.label}
                   </Link>
@@ -72,7 +72,7 @@ export function Header() {
             <div className="flex items-center gap-3">
               <Link
                 href="/offres"
-                className={`hidden rounded-full px-5 py-2.5 text-sm font-semibold transition sm:inline-flex ${onDark ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'}`}
+                className={`hidden rounded-[2px] px-5 py-2.5 text-sm font-semibold transition sm:inline-flex ${onDark ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'}`}
               >
                 Réserver
               </Link>

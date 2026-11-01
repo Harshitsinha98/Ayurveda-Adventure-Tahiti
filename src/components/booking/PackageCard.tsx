@@ -65,14 +65,14 @@ export function PackageCard({
 
   return (
     <>
-      <div className={`relative flex h-full flex-col rounded-[28px] p-8 transition ${featured ? 'bg-plum-800 text-sand-50' : 'border border-plum-800/12 bg-sand-50 text-ink'}`}>
-        {featured && <span className="absolute -top-3 right-6 rounded-full bg-saffron-500 px-3 py-1 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-plum-950">Le plus complet</span>}
+      <div className={`relative flex h-full flex-col rounded-[3px] p-8 transition ${featured ? 'bg-plum-800 text-sand-50' : 'border border-plum-800/12 bg-sand-50 text-ink'}`}>
+        {featured && <span className="absolute -top-3 right-6 rounded-[2px] bg-saffron-500 px-3 py-1 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-plum-950">Le plus complet</span>}
         <p className={`eyebrow ${featured ? 'text-saffron-300' : 'text-saffron-600'}`}>Carnet · valable {months} mois</p>
         <h3 className={`mt-4 text-[2.4rem] leading-none ${featured ? 'text-sand-50' : 'text-plum-800'}`}>{title}</h3>
         <p className="font-display mt-6 text-5xl">{nf.format(price)} <span className="text-xl">XPF</span></p>
         <p className={`mt-1 text-sm ${featured ? 'text-sand-200/75' : 'text-ink-soft'}`}>soit {nf.format(per)} XPF la séance</p>
         {summary && <p className={`mt-6 flex-1 leading-relaxed ${featured ? 'text-sand-200/85' : 'text-ink-soft'}`}>{summary}</p>}
-        <button type="button" onClick={() => setOpen(true)} className={`mt-8 rounded-full px-6 py-3.5 text-sm font-semibold transition ${featured ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'}`}>
+        <button type="button" onClick={() => setOpen(true)} className={`mt-8 rounded-[2px] px-6 py-3.5 text-sm font-semibold transition ${featured ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'}`}>
           Acheter ce carnet
         </button>
       </div>
@@ -89,7 +89,7 @@ export function PackageCard({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.45, ease: EASE }}
-              className="w-full max-w-lg rounded-[28px] bg-sand-50 p-7 shadow-2xl"
+              className="w-full max-w-lg rounded-[3px] bg-sand-50 p-7 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-start justify-between gap-4">
@@ -110,7 +110,7 @@ export function PackageCard({
                   <span>J’accepte les <a href="/cgv" target="_blank" className="underline">conditions générales de vente</a>. Le carnet se rattache à cet e-mail : utilisez-le pour réserver vos séances.</span>
                 </label>
                 {err && <p role="alert" className="text-sm text-plum-700 sm:col-span-2">{err}</p>}
-                <button disabled={busy} className="mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-plum-800 px-6 py-3.5 text-sm font-semibold text-sand-50 hover:bg-plum-700 disabled:opacity-60 sm:col-span-2">
+                <button disabled={busy} className="mt-2 inline-flex items-center justify-center gap-2 rounded-[2px] bg-plum-800 px-6 py-3.5 text-sm font-semibold text-sand-50 hover:bg-plum-700 disabled:opacity-60 sm:col-span-2">
                   {busy && <Loader2 size={16} className="animate-spin" />} Payer {nf.format(price)} XPF par carte
                 </button>
               </form>

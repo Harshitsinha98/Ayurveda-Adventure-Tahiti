@@ -36,7 +36,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   return (
     <html lang="fr" className={`${cormorant.variable} ${manrope.variable}`}>
       <body>
-        <a href="#contenu" className="sr-only z-[60] rounded-full bg-plum-800 px-4 py-2 text-sand-50 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+        <a href="#contenu" className="sr-only z-[60] rounded-[2px] bg-plum-800 px-4 py-2 text-sand-50 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           Aller au contenu
         </a>
         <MotionProvider>

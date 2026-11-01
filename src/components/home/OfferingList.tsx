@@ -50,7 +50,7 @@ export function OfferingList({ items }: { items: OfferingRow[] }) {
             <Link href={`/offres/${o.slug}`} className="group grid grid-cols-[auto_1fr_auto] items-center gap-5 py-7 md:grid-cols-[3.5rem_1.4fr_1fr_auto] md:gap-8 md:py-9">
               <span className="font-display hidden text-lg italic text-saffron-600 md:block">{String(i + 1).padStart(2, '0')}</span>
               {o.image && (
-                <span className="relative h-16 w-16 overflow-hidden rounded-2xl md:hidden">
+                <span className="relative h-16 w-16 overflow-hidden rounded-[3px] md:hidden">
                   <Image src={o.image.url} alt="" fill sizes="64px" className="object-cover" />
                 </span>
               )}
@@ -84,7 +84,7 @@ export function OfferingList({ items }: { items: OfferingRow[] }) {
               animate={{ opacity: 1, scale: 1, rotate: -3 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.45, ease: EASE }}
-              className="relative -translate-x-1/2 -translate-y-[60%] overflow-hidden rounded-[22px] shadow-[0_30px_60px_-25px_rgba(42,11,28,0.55)]"
+              className="relative -translate-x-1/2 -translate-y-[60%] overflow-hidden rounded-[3px] shadow-[0_30px_60px_-25px_rgba(42,11,28,0.55)]"
               style={{ width: 260, height: 330 }}
             >
               <Image src={items[active]!.image!.url} alt="" fill sizes="260px" className="object-cover" />

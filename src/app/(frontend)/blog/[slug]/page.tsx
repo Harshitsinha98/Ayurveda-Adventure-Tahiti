@@ -10,6 +10,7 @@ import { Reveal } from '@/components/motion/primitives'
 import { lexicalToText, RichText } from '@/components/site/RichText'
 import { PostCard } from '@/components/site/ui'
 import { img, payloadClient } from '@/lib/payload'
+import { postPhoto } from '@/lib/photos'
 import { listPosts, postCardProps } from '@/lib/queries'
 import type { Post } from '@/payload-types'
 
@@ -45,7 +46,7 @@ export default async function PostPage({ params }: P) {
   const { slug } = await params
   const post = await getPost(slug)
   if (!post) notFound()
-  const cover = img(post.cover, 'hero')
+  const cover = img(post.cover, 'hero') ?? postPhoto(post.slug)
   const more = (await listPosts(4)).filter((p) => p.id !== post.id).slice(0, 3)
   const site = process.env.NEXT_PUBLIC_SITE_URL || ''
   const cat = (post.categories?.[0] as { title?: string } | undefined)?.title
@@ -68,7 +69,7 @@ export default async function PostPage({ params }: P) {
       </header>
       {cover && (
         <div className="container-x">
-          <Reveal className="relative mx-auto aspect-[16/9] max-w-6xl overflow-hidden rounded-[32px]">
+          <Reveal className="relative mx-auto aspect-[16/9] max-w-6xl overflow-hidden rounded-[3px]">
             <Image src={cover.url} alt={cover.alt} fill priority sizes="(min-width:1280px) 1200px, 100vw" className="object-cover" />
           </Reveal>
         </div>
@@ -84,10 +85,10 @@ export default async function PostPage({ params }: P) {
           <div className="mt-14 border-t border-plum-800/10 pt-8 lg:hidden">
             <ShareButtons url={`${site}/blog/${post.slug}`} title={post.title} />
           </div>
-          <div className="mt-14 rounded-[28px] bg-plum-800 p-8 text-sand-50">
+          <div className="mt-14 rounded-[3px] bg-plum-800 p-8 text-sand-50">
             <p className="font-display text-3xl">Envie d’aller plus loin ?</p>
             <p className="mt-2 text-sand-200/80">Un premier échange offert de 20 minutes pour faire connaissance.</p>
-            <Link href="/offres/consultation-decouverte" className="mt-6 inline-block rounded-full bg-saffron-500 px-6 py-3 text-sm font-semibold text-plum-950 hover:bg-saffron-300">Réserver</Link>
+            <Link href="/offres/consultation-decouverte" className="mt-6 inline-block rounded-[2px] bg-saffron-500 px-6 py-3 text-sm font-semibold text-plum-950 hover:bg-saffron-300">Réserver</Link>
           </div>
         </div>
       </div>
