@@ -70,6 +70,10 @@ XPF n’a pas de décimales : 8 700 XPF est envoyé `8700`, jamais multiplié pa
    importer le contenu.
 5. La tâche planifiée `vercel.json` (`/api/cron/bookings`) envoie les rappels et libère les paiements
    non finalisés. Vercel envoie automatiquement `Authorization: Bearer $CRON_SECRET`.
+   Par défaut elle tourne une fois par jour à 18:00 UTC (08:00 à Tahiti), seule fréquence autorisée par
+   le plan Vercel Hobby ; les rappels partent alors la veille du rendez-vous. Avec Vercel Pro, passer le
+   `schedule` à `*/30 * * * *` et `CRON_INTERVAL_HOURS=0.5`. Les places non payées sont de toute façon
+   libérées à chaque consultation des créneaux et à chaque réservation, sans attendre le cron.
 
 ## Brevo
 

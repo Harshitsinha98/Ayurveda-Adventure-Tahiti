@@ -173,7 +173,10 @@ export const publicEndpoints: Endpoint[] = [
       const payload = req.payload
       const released = await releaseExpiredHolds(payload)
       const settings = (await payload.findGlobal({ slug: 'booking-settings', depth: 0 })) as Doc
-      const until = addHours(new Date(), Number(settings.reminderHours ?? 24)).toISOString()
+      // The cron runs once a day on Vercel Hobby (CRON_INTERVAL_HOURS=24), every 30 min on Pro (0.5).
+      // Looking ahead by "reminder hours + interval" makes sure no booking is missed between two runs.
+      const interval = Number(process.env.CRON_INTERVAL_HOURS ?? 24)
+      const until = addHours(new Date(), Number(settings.reminderHours ?? 24) + interval).toISOString()
       const now = new Date().toISOString()
       let reminders = 0
       const due = await payload.find({
