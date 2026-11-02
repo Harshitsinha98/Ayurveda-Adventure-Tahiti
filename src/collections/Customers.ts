@@ -1,7 +1,16 @@
-import type { CollectionConfig } from 'payload'
+import type { Access, CollectionConfig } from 'payload'
 
-import { staffOnly } from '@/access'
+import { isStaff, staffOnly } from '@/access'
 import { L } from '@/lib/admin-labels'
+import { verifyAccountEmail } from '@/lib/account-email'
+
+/** Staff see every customer; a logged-in customer may only read/update their own record. */
+const ownRecordOrStaff: Access = ({ req }) => {
+  const user = req.user as { id?: string | number; collection?: string } | undefined
+  if (isStaff(req.user as never)) return true
+  if (user?.collection === 'customers' && user.id != null) return { id: { equals: user.id } }
+  return false
+}
 
 export const customerGroups = [
   { label: L('Clients', 'Clients'), value: 'clients' },
@@ -12,10 +21,39 @@ export const customerGroups = [
   { label: L('Importé de Wix', 'Imported from Wix'), value: 'wix' },
 ]
 
-/** Customer database (CRM). Contacts are synchronised to Brevo for newsletters. */
+/**
+ * Customer database (CRM) — also the public-website account.
+ *
+ * `auth` is enabled so customers can create an account, verify their email and
+ * log in on the site to find their bookings again. This is a SEPARATE login
+ * from the staff back office (`users` collection): customers can never reach
+ * `/admin` (see `admin.hidden` is false for staff CRM use, but `access.admin`
+ * denies customers). Staff keep full CRM access; a customer can only ever
+ * read/update their own record.
+ */
 export const Customers: CollectionConfig = {
   slug: 'customers',
   labels: { singular: L('Client', 'Client'), plural: L('Clients', 'Clients') },
+  auth: {
+    tokenExpiration: 60 * 60 * 24 * 30, // stay logged in for 30 days
+    maxLoginAttempts: 10,
+    lockTime: 10 * 60 * 1000,
+    // Require email verification before a password account can log in.
+    // Google sign-in (added later) provides an already-verified email.
+    verify: {
+      generateEmailSubject: () => verifyAccountEmail.subject(),
+      generateEmailHTML: ({ token, user }) =>
+        verifyAccountEmail.html(token as string, (user as { firstName?: string })?.firstName),
+    },
+    forgotPassword: {
+      generateEmailSubject: () => verifyAccountEmail.resetSubject(),
+      generateEmailHTML: (args) =>
+        verifyAccountEmail.resetHtml(
+          (args?.token as string) ?? '',
+          (args?.user as { firstName?: string } | undefined)?.firstName,
+        ),
+    },
+  },
   admin: {
     group: L('Clients et newsletter', 'Clients & newsletter'),
     useAsTitle: 'displayName',
@@ -23,7 +61,16 @@ export const Customers: CollectionConfig = {
     listSearchableFields: ['email', 'firstName', 'lastName', 'phone'],
     description: L('Liste des clients. Export CSV : cochez les fiches puis « Exporter ».', 'Client list. CSV export: tick the records then “Export”.'),
   },
-  access: { read: staffOnly, create: staffOnly, update: staffOnly, delete: staffOnly },
+  access: {
+    // Staff: full CRM. Customer: only their own record.
+    read: ownRecordOrStaff,
+    update: ownRecordOrStaff,
+    // Creation stays server-side (booking flow / controlled register endpoint) and admin.
+    create: staffOnly,
+    delete: staffOnly,
+    // Customers must never access the admin panel; only staff can.
+    admin: ({ req }) => isStaff(req.user as never),
+  },
   fields: [
     {
       type: 'row',

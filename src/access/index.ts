@@ -3,10 +3,19 @@ import type { Access, FieldAccess } from 'payload'
 /** Roles: `admin` = technical maintainer, `editeur` = Eliane (daily management). */
 export type Role = 'admin' | 'editeur'
 
-type U = { role?: Role | null } | null | undefined
+/**
+ * Two kinds of authenticated principals exist:
+ *  - staff: a document from the `users` collection (role admin/editeur) → back office
+ *  - customer: a document from the `customers` collection → public website account
+ * `req.user.collection` tells them apart.
+ */
+type U = { role?: Role | null; collection?: string } | null | undefined
 
-export const isAdmin = (user: U) => user?.role === 'admin'
-export const isStaff = (user: U) => user?.role === 'admin' || user?.role === 'editeur'
+export const isAdmin = (user: U) => user?.collection === 'users' && user?.role === 'admin'
+export const isStaff = (user: U) =>
+  user?.collection === 'users' && (user?.role === 'admin' || user?.role === 'editeur')
+/** A logged-in customer (public website account), not a staff member. */
+export const isCustomer = (user: U) => user?.collection === 'customers'
 
 export const adminOnly: Access = ({ req }) => isAdmin(req.user as U)
 export const staffOnly: Access = ({ req }) => isStaff(req.user as U)
