@@ -61,7 +61,7 @@ export default async function HomePage() {
         eyebrow={home.eyebrow || homeDefaults.eyebrow}
         lines={home.headline?.length ? home.headline.map((h) => h.line) : homeDefaults.headline}
         intro={home.intro || homeDefaults.intro}
-        image={img(home.heroImage, 'hero') ?? photo('eliane-gange', undefined, lang)}
+        image={img(home.heroImage, 'hero') ?? photo('moorea-coucher-soleil', undefined, lang)}
         accent={img(accent?.image, 'thumb') ?? photo('bouddha-bougie', undefined, lang)}
       />
 
