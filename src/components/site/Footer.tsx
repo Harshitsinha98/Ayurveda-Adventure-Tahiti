@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { FooterReveal } from '@/components/site/FooterReveal'
 import { NewsletterForm } from '@/components/site/NewsletterForm'
 import { NAV } from '@/lib/nav'
 import { getT } from '@/i18n/server'
@@ -9,7 +10,14 @@ import { getSite } from '@/lib/payload'
 export async function Footer() {
   const [site, { t }] = await Promise.all([getSite(), getT()])
   return (
-    <footer className="relative overflow-hidden bg-plum-950 text-sand-100">
+    <footer className="relative overflow-hidden bg-plum-950 text-sand-100" data-cursor-dark>
+      <FooterReveal
+        wordmark={
+          <p className="font-display whitespace-nowrap px-[2vw] pb-4 text-center text-[15vw] leading-[0.8] text-sand-50/[0.07]">
+            Ayurveda <em className="text-saffron-300/20">Tahiti</em>
+          </p>
+        }
+      >
       <div aria-hidden className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(210,154,72,0.18),transparent_65%)]" />
       <div className="container-x relative grid gap-14 py-20 lg:grid-cols-[1.3fr_1fr]">
         <div>
@@ -59,6 +67,7 @@ export async function Footer() {
           </nav>
         </div>
       </div>
+      </FooterReveal>
     </footer>
   )
 }

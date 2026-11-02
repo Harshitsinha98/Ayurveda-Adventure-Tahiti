@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Cormorant_Garamond, Manrope } from 'next/font/google'
 
+import { Cursor, Preloader, SmoothScroll } from '@/components/motion/experience'
+import { introScript } from '@/components/motion/intro'
 import { MotionProvider } from '@/components/motion/primitives'
 import { Footer } from '@/components/site/Footer'
 import { Header } from '@/components/site/Header'
@@ -48,17 +50,27 @@ export default async function FrontendLayout({ children }: { children: React.Rea
   const [site, lang] = await Promise.all([getSite(), getLang()])
   const t = dictionaries[lang]
   return (
-    <html lang={lang} className={`${cormorant.variable} ${manrope.variable}`}>
+    <html lang={lang} className={`${cormorant.variable} ${manrope.variable}`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: introScript }} />
+        <noscript>
+          <style>{'.preloader{display:none}'}</style>
+        </noscript>
+      </head>
       <body>
         <a href="#contenu" className="sr-only z-[60] rounded-[2px] bg-plum-800 px-4 py-2 text-sand-50 focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
           {t.header.skip}
         </a>
         <LangProvider lang={lang}>
         <MotionProvider>
-          <Header />
-          <main id="contenu">{children}</main>
-          <Footer />
-          <WhatsAppButton number={site.whatsapp} />
+          <SmoothScroll>
+            <Preloader />
+            <Header />
+            <main id="contenu" className="relative z-[1] bg-sand-100">{children}</main>
+            <Footer />
+            <WhatsAppButton number={site.whatsapp} />
+            <Cursor />
+          </SmoothScroll>
         </MotionProvider>
         </LangProvider>
       </body>

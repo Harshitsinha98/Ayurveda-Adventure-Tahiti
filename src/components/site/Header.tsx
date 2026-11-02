@@ -60,12 +60,15 @@ export function Header() {
                     key={n.href}
                     href={n.href}
                     aria-current={active ? 'page' : undefined}
-                    className={`relative px-4 py-2 text-[0.92rem] transition-colors ${onDark ? 'text-sand-100 hover:text-saffron-300' : 'text-ink-soft hover:text-plum-800'}`}
+                    className={`group relative px-4 py-2 text-[0.92rem] transition-colors ${onDark ? 'text-sand-100 hover:text-saffron-300' : 'text-ink-soft hover:text-plum-800'}`}
                   >
                     {active && (
                       <motion.span layoutId="nav-line" className={`absolute inset-x-4 -bottom-0.5 h-px ${onDark ? 'bg-saffron-300' : 'bg-plum-800'}`} transition={{ duration: 0.5, ease: EASE }} />
                     )}
-                    {t.nav[n.key]}
+                    <span className="roll">
+                      <span>{t.nav[n.key]}</span>
+                      <span aria-hidden>{t.nav[n.key]}</span>
+                    </span>
                   </Link>
                 )
               })}
@@ -75,9 +78,9 @@ export function Header() {
               <LangToggle tone={onDark ? 'dark' : 'light'} />
               <Link
                 href="/offres"
-                className={`hidden rounded-[2px] px-5 py-2.5 text-sm font-semibold transition sm:inline-flex ${onDark ? 'bg-saffron-500 text-plum-950 hover:bg-saffron-300' : 'bg-plum-800 text-sand-50 hover:bg-plum-700'}`}
+                className={`btn-fill hidden rounded-[2px] px-5 py-2.5 text-sm font-semibold sm:inline-flex ${onDark ? 'btn-fill-light bg-saffron-500 text-plum-950' : 'bg-plum-800 text-sand-50'}`}
               >
-                {t.header.book}
+                <span className="relative z-10">{t.header.book}</span>
               </Link>
               <button
                 type="button"
@@ -107,11 +110,14 @@ export function Header() {
           >
             <nav aria-label={t.header.menu} className="container-x flex flex-1 flex-col justify-center gap-2">
               {[{ href: '/', key: 'home' as const }, ...NAV].map((n, i) => (
-                <motion.div key={n.href} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 + i * 0.05 }}>
-                  <Link href={n.href} className="font-display block py-1 text-[2.6rem] leading-tight hover:text-saffron-300">
-                    {t.nav[n.key]}
-                  </Link>
-                </motion.div>
+                <div key={n.href} className="overflow-hidden">
+                  <motion.div initial={{ y: '110%' }} animate={{ y: '0%' }} transition={{ duration: 0.8, delay: 0.2 + i * 0.06, ease: EASE }}>
+                    <Link href={n.href} className="font-display flex items-baseline gap-4 py-1 text-[clamp(2.4rem,10vw,3.4rem)] leading-tight hover:text-saffron-300">
+                      <span className="text-sm italic text-saffron-300/70">{String(i + 1).padStart(2, '0')}</span>
+                      {t.nav[n.key]}
+                    </Link>
+                  </motion.div>
+                </div>
               ))}
             </nav>
             <div className="container-x pb-10 text-sm text-sand-200/80">{t.header.menuFoot}</div>

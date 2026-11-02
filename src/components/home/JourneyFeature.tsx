@@ -1,16 +1,16 @@
 'use client'
 
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRef } from 'react'
 
-import { Reveal } from '@/components/motion/primitives'
+import { CountUp } from '@/components/motion/primitives'
+import { HorizontalScroll, SplitWords } from '@/components/motion/scroll'
 import { useT } from '@/i18n/client'
 import type { Img } from '@/lib/payload'
 
-/** Featured journey: a drifting photo collage and a countdown to departure. */
+/** Featured journey: the page scrolls sideways through the trip's photos, with the countdown up front. */
 export function JourneyFeature({
   slug,
   title,
@@ -32,74 +32,69 @@ export function JourneyFeature({
   seatsLeft?: number | null
   images: Img[]
 }) {
-  const ref = useRef<HTMLElement>(null)
-  const t = useT().journey
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
-  const a = useTransform(scrollYProgress, [0, 1], [80, -80])
-  const b = useTransform(scrollYProgress, [0, 1], [-40, 60])
-  const c = useTransform(scrollYProgress, [0, 1], [120, -120])
-  const [main, second, third] = images
+  const T = useT()
+  const t = T.journey
   const [titleMain, titleSub] = title.split(' · ')
+  const shapes = ['h-[62vh] w-[44vh]', 'h-[46vh] w-[60vh] self-end', 'h-[56vh] w-[40vh] self-start', 'h-[50vh] w-[66vh]', 'h-[60vh] w-[42vh] self-end']
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-sand-200/60 py-28 lg:py-40" aria-labelledby="journey-title">
-      <div className="container-x grid items-center gap-16 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="relative order-2 h-[560px] lg:order-1 lg:h-[680px]">
-          {main && (
-            <motion.div style={{ y: a }} className="arch absolute left-[8%] top-0 h-[78%] w-[62%] overflow-hidden shadow-[0_40px_80px_-35px_rgba(42,11,28,0.6)]">
-              <Image src={main.url} alt={main.alt} fill sizes="(min-width:1024px) 30vw, 60vw" className="object-cover" />
-            </motion.div>
-          )}
-          {second && (
-            <motion.div style={{ y: b }} className="absolute bottom-[4%] right-0 h-[46%] w-[46%] overflow-hidden rounded-[3px] border-[5px] border-sand-100 shadow-[0_30px_60px_-30px_rgba(42,11,28,0.5)]">
-              <Image src={second.url} alt={second.alt} fill sizes="(min-width:1024px) 22vw, 45vw" className="object-cover" />
-            </motion.div>
-          )}
-          {third && (
-            <motion.div style={{ y: c }} className="absolute bottom-[18%] left-0 h-36 w-28 overflow-hidden rounded-[2px] border-[5px] border-sand-100">
-              <Image src={third.url} alt={third.alt} fill sizes="128px" className="object-cover" />
-            </motion.div>
-          )}
+    <HorizontalScroll
+      className="bg-plum-950 py-20 text-sand-50 lg:py-0"
+      head={
+        <div className="container-x mb-10 flex items-end justify-between gap-6 lg:mb-12">
+          <p className="eyebrow text-saffron-300">{t.next} · {kicker}</p>
+          <p className="eyebrow hidden text-[0.62rem] text-sand-200/60 lg:block">{T.home.journeyScroll} →</p>
         </div>
-
-        <div className="order-1 lg:order-2">
-          <Reveal>
-            <p className="eyebrow text-saffron-600">{t.next} · {kicker}</p>
-            <h2 id="journey-title" className="mt-5 text-[clamp(2.8rem,6vw,5.4rem)] leading-[0.95] text-plum-800">
-              {titleMain}
-              {titleSub && <em className="mt-2 block text-[0.55em] leading-tight text-saffron-600">{titleSub}</em>}
-            </h2>
-            <p className="mt-8 max-w-xl text-lg leading-relaxed text-ink-soft">{summary}</p>
-            {region && <p className="mt-4 text-sm uppercase tracking-[0.18em] text-sage-700">{region}</p>}
-          </Reveal>
-          <Reveal delay={0.12}>
-            <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-y border-plum-800/12 py-6">
-              {daysLeft != null && daysLeft > 0 && (
-                <div>
-                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">{t.departsIn}</dt>
-                  <dd className="font-display mt-1 text-4xl text-plum-800">{daysLeft} <span className="text-lg">{t.days}</span></dd>
-                </div>
-              )}
-              {seatsLeft != null && (
-                <div>
-                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">{t.seats}</dt>
-                  <dd className="font-display mt-1 text-4xl text-plum-800">{seatsLeft} <span className="text-lg">{t.left}</span></dd>
-                </div>
-              )}
-              {price && (
-                <div>
-                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">{t.from}</dt>
-                  <dd className="font-display mt-1 text-3xl text-plum-800">{price}</dd>
-                </div>
-              )}
-            </dl>
-            <Link href={`/voyage-en-inde/${slug}`} className="group mt-10 inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">
-              {t.discover}
-              <ArrowRight size={16} strokeWidth={1.5} className="transition-transform duration-500 group-hover:translate-x-1" />
-            </Link>
-          </Reveal>
-        </div>
+      }
+    >
+      <div className="flex w-[86vw] shrink-0 snap-start flex-col justify-center sm:w-[70vw] lg:w-[46vw] lg:pr-10">
+        <SplitWords as="h2" text={titleMain} className="block text-[clamp(3rem,7vw,7rem)] leading-[0.92]" />
+        {titleSub && <p className="font-display mt-3 text-[clamp(1.6rem,3vw,2.8rem)] italic text-saffron-300">{titleSub}</p>}
+        <p className="mt-8 max-w-lg text-lg leading-relaxed text-sand-200/80">{summary}</p>
+        {region && <p className="mt-4 text-sm uppercase tracking-[0.18em] text-saffron-300/80">{region}</p>}
+        <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-y border-sand-50/15 py-6">
+          {daysLeft != null && daysLeft > 0 && (
+            <div>
+              <dt className="text-[0.66rem] uppercase tracking-[0.16em] text-sand-200/60">{t.departsIn}</dt>
+              <dd className="font-display mt-1 text-4xl"><CountUp to={daysLeft} /> <span className="text-lg">{t.days}</span></dd>
+            </div>
+          )}
+          {seatsLeft != null && (
+            <div>
+              <dt className="text-[0.66rem] uppercase tracking-[0.16em] text-sand-200/60">{t.seats}</dt>
+              <dd className="font-display mt-1 text-4xl"><CountUp to={seatsLeft} /> <span className="text-lg">{t.left}</span></dd>
+            </div>
+          )}
+          {price && (
+            <div>
+              <dt className="text-[0.66rem] uppercase tracking-[0.16em] text-sand-200/60">{t.from}</dt>
+              <dd className="font-display mt-1 text-2xl sm:text-3xl">{price}</dd>
+            </div>
+          )}
+        </dl>
+        <Link href={`/voyage-en-inde/${slug}`} className="btn-fill btn-fill-light group mt-10 inline-flex w-fit items-center gap-3 rounded-[2px] bg-saffron-500 px-8 py-4 font-semibold text-plum-950">
+          <span className="relative z-10">{t.discover}</span>
+          <ArrowRight size={16} strokeWidth={1.5} className="relative z-10 transition-transform duration-500 group-hover:translate-x-1" />
+        </Link>
       </div>
-    </section>
+
+      {images.map((im, i) => (
+        <motion.figure
+          key={im.url}
+          className={`relative shrink-0 snap-center overflow-hidden rounded-[2px] max-lg:h-[52svh] max-lg:w-[78vw] ${shapes[i % shapes.length]}`}
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+          data-cursor={T.home.view}
+        >
+          <Link href={`/voyage-en-inde/${slug}`} className="group block h-full w-full" tabIndex={-1} aria-hidden>
+            <Image src={im.url} alt={im.alt} fill sizes="(min-width:1024px) 40vw, 80vw" className="object-cover transition-transform duration-[1.6s] ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-[1.07]" />
+          </Link>
+          <figcaption className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-plum-950/80 to-transparent px-5 pb-4 pt-12 text-sm text-sand-100/90">{im.alt}</figcaption>
+        </motion.figure>
+      ))}
+      <div className="w-[8vw] shrink-0" aria-hidden />
+    </HorizontalScroll>
   )
 }

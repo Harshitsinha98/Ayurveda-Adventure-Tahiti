@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
 
 /*
  * Ayurveda Tahiti design tokens.
@@ -196,6 +197,125 @@
     font-size: 0.85rem;
     font-weight: 600;
     color: var(--color-ink-soft);
+  }
+}
+
+/* Motion helpers */
+@layer components {
+  /* First-visit intro is skipped once seen in this session (class set before paint). */
+  .intro-seen .preloader {
+    display: none;
+  }
+  /* Safety net: never let the intro hide the page for long if scripts are slow. */
+  .preloader {
+    animation: preloader-failsafe 0.4s 5s forwards;
+  }
+  @keyframes preloader-failsafe {
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  .page-curtain {
+    display: none;
+    transform-origin: top;
+    animation: curtain-up 0.85s cubic-bezier(0.76, 0, 0.24, 1) 0.05s both;
+  }
+  .intro-seen .page-curtain {
+    display: block;
+  }
+  @keyframes curtain-up {
+    from {
+      transform: scaleY(1);
+    }
+    to {
+      transform: scaleY(0);
+    }
+  }
+  /* Button whose colour floods up from the bottom on hover. */
+  .btn-fill {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: color 0.5s var(--ease-soft);
+  }
+  .btn-fill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--color-saffron-500);
+    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+    transform: translateY(102%);
+    transition:
+      transform 0.65s var(--ease-soft),
+      border-radius 0.65s var(--ease-soft);
+  }
+  .btn-fill:hover::before,
+  .btn-fill:focus-visible::before {
+    transform: translateY(0);
+    border-radius: 0;
+  }
+  .btn-fill:hover,
+  .btn-fill:focus-visible {
+    color: var(--color-plum-950);
+  }
+  .btn-fill-light::before {
+    background: var(--color-sand-50);
+  }
+  .btn-outline {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: color 0.5s var(--ease-soft);
+  }
+  .btn-outline::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: var(--color-plum-800);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.6s var(--ease-soft);
+  }
+  .btn-outline:hover::before,
+  .btn-outline:focus-visible::before {
+    transform: scaleY(1);
+  }
+  .btn-outline:hover,
+  .btn-outline:focus-visible {
+    color: var(--color-sand-50);
+  }
+  /* Underline that draws in from the left. */
+  .link-line {
+    background: linear-gradient(currentColor, currentColor) left bottom / 100% 1px no-repeat;
+    padding-bottom: 3px;
+    transition: background-size 0.6s var(--ease-soft);
+  }
+  .link-line:hover {
+    animation: link-redraw 0.9s var(--ease-soft);
+  }
+  @keyframes link-redraw {
+    0% { background-size: 100% 1px; background-position: right bottom; }
+    45% { background-size: 0% 1px; background-position: right bottom; }
+    46% { background-position: left bottom; }
+    100% { background-size: 100% 1px; background-position: left bottom; }
+  }
+  /* Nav label that rolls up to a copy of itself on hover. */
+  .roll {
+    display: inline-flex;
+    flex-direction: column;
+    height: 1.25em;
+    overflow: hidden;
+    line-height: 1.25;
+  }
+  .roll > span {
+    transition: transform 0.55s var(--ease-soft);
+  }
+  .group:hover .roll > span,
+  .group:focus-visible .roll > span {
+    transform: translateY(-100%);
   }
 }
 
