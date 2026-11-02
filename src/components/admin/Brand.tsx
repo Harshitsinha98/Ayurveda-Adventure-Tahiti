@@ -6,13 +6,9 @@ import { useTranslation } from '@payloadcms/ui'
 import { tr } from '@/lib/admin-labels'
 
 export function Logo() {
-  // On the login screen the translation provider is available; default to FR.
-  let lang = 'fr'
-  try {
-    lang = useTranslation()?.i18n?.language ?? 'fr'
-  } catch {
-    lang = 'fr'
-  }
+  // The translation provider wraps the whole admin, including the login screen.
+  const { i18n } = useTranslation()
+  const lang = i18n?.language ?? 'fr'
   const tagline = tr(lang, { fr: 'Espace de gestion', en: 'Management area' })
 
   return (

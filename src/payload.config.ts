@@ -44,6 +44,8 @@ export default buildConfig({
     meta: {
       titleSuffix: ' · Ayurveda Tahiti',
       icons: [{ rel: 'icon', url: '/images/brand/emblem.png' }],
+      // Discourage automatic browser translation of the admin (see NoTranslate).
+      other: { google: 'notranslate' },
     },
     components: {
       graphics: {
@@ -51,6 +53,7 @@ export default buildConfig({
         Icon: '/components/admin/Brand#Icon',
       },
       actions: ['/components/admin/LanguageSwitch#LanguageSwitch'],
+      providers: ['/components/admin/NoTranslate#NoTranslate'],
       beforeDashboard: ['/components/admin/Dashboard#Dashboard'],
     },
     dateFormat: 'd MMMM yyyy',
