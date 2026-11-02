@@ -77,6 +77,7 @@ async function media(payload: Payload, name: string, alt: string) {
 }
 
 const ALT: Record<string, string> = {
+  'moorea-coucher-soleil': 'Coucher de soleil sur le lagon de Moorea, cocotiers en ombre chinoise',
   'eliane-gange': 'Eliane au bord du Gange, dans l’Himalaya',
   'bouddha-bougie': 'Statue de Bouddha et bougie allumée',
   'puja-gange': 'Offrandes de fleurs lors d’une puja au bord du Gange',
@@ -137,7 +138,7 @@ async function run() {
       eyebrow: home.eyebrow,
       headline: home.headline.map((line) => ({ line })),
       intro: home.intro,
-      heroImage: await m('eliane-gange'),
+      heroImage: await m('moorea-coucher-soleil'),
       manifesto: home.manifesto,
       manifestoAside: home.manifestoAside,
       ritual: { ...home.ritual, image: await m('puja-gange') },
