@@ -114,6 +114,9 @@ async function upsert(payload: Payload, collection: 'offerings' | 'packages' | '
   return payload.create({ collection, data: { ...data, slug } as never })
 }
 
+const tripSections = (t: Doc) =>
+  ((t.sections ?? []) as { title: string; text?: string; items?: string[] }[]).map((x) => ({ title: x.title, text: x.text, items: (x.items ?? []).map((text) => ({ text })) }))
+
 async function run() {
   const payload = await getPayload({ config })
   const m = (n: string) => media(payload, n, ALT[n] || n)
@@ -197,7 +200,7 @@ async function run() {
     offeringIds[o.slug] = doc.id
   }
   for (const t of trips) {
-    const { body, image, gallery, itinerary, included, notIncluded, highlights, capacity, ...rest } = t as Doc
+    const { body, image, gallery, itinerary, included, notIncluded, highlights, capacity, sections: _s, ...rest } = t as Doc
     const doc = await upsert(payload, 'offerings', t.slug, {
       ...rest,
       kind: 'voyage',
@@ -209,6 +212,7 @@ async function run() {
       included: (included as string[]).map((text) => ({ text })),
       notIncluded: (notIncluded as string[]).map((text) => ({ text })),
       highlights: (highlights as string[]).map((text) => ({ text })),
+      sections: tripSections(t as Doc),
       cancellationPolicy:
         'Conditions d’annulation du voyage : voir les conditions générales de vente. Merci de souscrire une assurance voyage.',
       published: true,
@@ -300,7 +304,7 @@ async function run() {
     const id = offeringIds[slug]
     if (!id) continue
     const fr = (await payload.findByID({ collection: 'offerings', id, depth: 0 })) as Doc
-    const { body, itinerary, included, notIncluded, highlights, extras, ...rest } = o as Doc
+    const { body, itinerary, included, notIncluded, highlights, extras, sections, ...rest } = o as Doc
     await payload.update({
       collection: 'offerings',
       id,
@@ -312,6 +316,7 @@ async function run() {
         included: (included as string[]).map((text) => ({ text })),
         notIncluded: (notIncluded as string[]).map((text) => ({ text })),
         highlights: (highlights as string[]).map((text) => ({ text })),
+        sections: tripSections({ sections }),
         ...(extras ? { extras: (fr.extras ?? []).map((x: Doc, i: number) => ({ ...x, label: (extras as string[])[i] ?? x.label })) } : {}),
       } as never,
     })

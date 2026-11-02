@@ -288,6 +288,25 @@ export interface Offering {
       }[]
     | null;
   /**
+   * Blocs libres affichés sur la page, par ex. « Hébergement au cœur de la Kumbha Mela » ou « Bon à savoir » : un titre, un texte et, si besoin, une liste à puces.
+   */
+  sections?:
+    | {
+        title: string;
+        /**
+         * Laisser une ligne vide entre deux paragraphes.
+         */
+        text?: string | null;
+        items?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
    * 0 = gratuit. Laisser vide si prix sur demande.
    */
   price?: number | null;
@@ -346,6 +365,9 @@ export interface Offering {
   guide?: string | null;
   itinerary?:
     | {
+        /**
+         * Ex. « Jour 1 · 26.02 »
+         */
         day: string;
         title: string;
         text?: string | null;
@@ -1082,6 +1104,19 @@ export interface OfferingsSelect<T extends boolean = true> {
     | T
     | {
         text?: T;
+        id?: T;
+      };
+  sections?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
         id?: T;
       };
   price?: T;

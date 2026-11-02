@@ -81,6 +81,23 @@ export const Offerings: CollectionConfig = {
               type: 'array',
               fields: [{ name: 'text', label: 'Point fort', type: 'text', required: true }],
             },
+            {
+              name: 'sections',
+              localized: true,
+              label: 'Rubriques supplémentaires',
+              labels: { singular: 'Rubrique', plural: 'Rubriques' },
+              type: 'array',
+              admin: {
+                initCollapsed: true,
+                description:
+                  'Blocs libres affichés sur la page, par ex. « Hébergement au cœur de la Kumbha Mela » ou « Bon à savoir » : un titre, un texte et, si besoin, une liste à puces.',
+              },
+              fields: [
+                { name: 'title', label: 'Titre', type: 'text', required: true },
+                { name: 'text', label: 'Texte', type: 'textarea', admin: { description: 'Laisser une ligne vide entre deux paragraphes.' } },
+                { name: 'items', label: 'Liste à puces', labels: { singular: 'Ligne', plural: 'Lignes' }, type: 'array', fields: [{ name: 'text', label: 'Texte', type: 'text', required: true }] },
+              ],
+            },
           ],
         },
         {
@@ -224,7 +241,7 @@ export const Offerings: CollectionConfig = {
                 {
                   type: 'row',
                   fields: [
-                    { name: 'day', label: 'Jour', type: 'text', required: true, admin: { width: '25%' } },
+                    { name: 'day', label: 'Jour', type: 'text', required: true, admin: { width: '25%', description: 'Ex. « Jour 1 · 26.02 »' } },
                     { name: 'title', localized: true, label: 'Étape', type: 'text', required: true },
                   ],
                 },

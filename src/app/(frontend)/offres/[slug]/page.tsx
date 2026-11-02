@@ -7,6 +7,7 @@ import { notFound, redirect } from 'next/navigation'
 import { BookingWidget } from '@/components/booking/BookingWidget'
 import { ContactForm } from '@/components/booking/ContactForm'
 import { Reveal } from '@/components/motion/primitives'
+import { InfoSections } from '@/components/site/InfoSections'
 import { RichText } from '@/components/site/RichText'
 import { Pill } from '@/components/site/ui'
 import { formatEUR } from '@/lib/money'
@@ -92,6 +93,11 @@ export default async function OfferingPage({ params }: P) {
                     <li key={h.id} className="rounded-[3px] bg-sand-50 px-5 py-4 text-[0.97rem] text-ink-soft">{h.text}</li>
                   ))}
                 </ul>
+              )}
+              {(o.sections?.length ?? 0) > 0 && (
+                <div className="mt-12">
+                  <InfoSections sections={o.sections} tone="sand" columns={1} />
+                </div>
               )}
               {o.slug === 'meditation-son-primordial' && (
                 <div className="mt-12 border-l-2 border-saffron-500/60 pl-6">

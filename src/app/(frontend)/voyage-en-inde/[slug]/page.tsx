@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 
 import { BookingWidget } from '@/components/booking/BookingWidget'
 import { Reveal } from '@/components/motion/primitives'
+import { InfoSections } from '@/components/site/InfoSections'
 import { RichText } from '@/components/site/RichText'
 import { SectionHeading } from '@/components/site/ui'
 import { Gallery, Itinerary, TripHero } from '@/components/trip/TripParts'
@@ -135,6 +136,14 @@ export default async function TripPage({ params }: P) {
             <div className="mt-12">
               <Gallery images={gallery} />
             </div>
+          </div>
+        </section>
+      )}
+
+      {(o.sections?.length ?? 0) > 0 && (
+        <section className="bg-sand-50 py-24 lg:py-28" aria-label={t.trip.goodToKnow}>
+          <div className="container-x">
+            <InfoSections sections={o.sections} />
           </div>
         </section>
       )}

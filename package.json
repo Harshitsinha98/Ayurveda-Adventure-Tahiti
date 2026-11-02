@@ -15,7 +15,8 @@
     "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed.ts",
     "mobupay:secret": "tsx --env-file=.env scripts/mobupay-secret.ts",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
-    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create"
+    "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
+    "sync:trips": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/sync-trips.ts"
   },
   "engines": {
     "node": ">=22"

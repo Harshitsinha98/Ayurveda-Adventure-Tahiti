@@ -190,6 +190,7 @@ const fr = {
     enlarge: 'Agrandir',
     gallery: 'Galerie',
     reserve: 'Réservation du voyage',
+    goodToKnow: 'Bon à savoir',
   },
   events: {
     metaTitle: 'Événements · ateliers, formations et voyages à venir',
@@ -550,6 +551,7 @@ const en: Dict = {
     enlarge: 'Enlarge',
     gallery: 'Gallery',
     reserve: 'Journey booking',
+    goodToKnow: 'Good to know',
   },
   events: {
     metaTitle: 'Events · upcoming workshops, courses and journeys',
