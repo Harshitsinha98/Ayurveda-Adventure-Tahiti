@@ -364,3 +364,248 @@ export const postSlugs: Record<string, { slug: string; category: string }> = {
   '/post/fiu-de-tourner-en-rond': { slug: 'fiu-de-tourner-en-rond', category: 'Méditation' },
   '/post/révision-et-vidange': { slug: 'revision-et-vidange', category: 'Ayurveda' },
 }
+
+// ---------------------------------------------------------------------------
+// English translations (stored in the `en` locale of the CMS).
+// Translated from Eliane's French texts; Eliane can refine them in the dashboard.
+// ---------------------------------------------------------------------------
+
+export const i18nEn = {
+  home: {
+    eyebrow: 'Ayurveda · Meditation · Yoga · Vedic sciences',
+    headline: ['Clear your mind.', 'Restore your energy.', 'Transform your life.'],
+    intro:
+      'Through Ayurveda and meditation, I help people build simple, powerful rituals to live with more clarity and calm, in Tahiti or online.',
+    manifesto:
+      'Life is beautiful. Truly beautiful. Fascinating. Sometimes we find it a little too intense. Sometimes a little dull, or unfair, even cruel. But all of this is only a story. The stories we tell ourselves, we choose them. Often without even realising it.',
+    manifestoAside: 'Come and learn to tell yourself the story you really want to hear.',
+    ritual: {
+      title: 'Your day begins long before you open your eyes.',
+      text: 'The first 20 minutes after waking influence your mood, your hormones, and even your digestion. A few aligned gestures can transform your daily life, your energy, your way of living.',
+    },
+    pillars: [
+      { title: 'Food', text: 'Nourishing the body according to its constitution.' },
+      { title: 'Movement', text: 'A living, supple and present body.' },
+      { title: 'Sleep', text: 'Finding the natural rhythm of rest.' },
+      { title: 'Emotions', text: 'Welcoming, understanding, letting go.' },
+      { title: 'Routine', text: 'Simple rituals, morning and evening.' },
+      { title: 'Meditation', text: 'The silence that clears the mind.' },
+    ],
+  },
+  about: {
+    lead: 'My path is that of a bridge between worlds.',
+    paragraphs: [
+      'As a child, I perceived things that no one else seemed to see. But in the Austrian-German setting where I grew up, there was no place for that. Later, living in Kuwait taught me that what we hold to be “real” depends mostly on what we have been taught to believe.',
+      'I studied ethnology to understand the many ways of seeing the world, and I went to meet living spiritualities, such as Candomblé in Brazil. There, I saw the invisible take shape again.',
+      'It is in Tahiti, where I have lived for 22 years, that I discovered another wisdom: that of the body, of the ancestors, of deep bonds. To learn more, I completed a Master’s year in Oceanian Languages, Cultures and Societies in Tahiti.',
+      'In 2020, I trained with Chopra Global, which introduced me to a living, grounded and accessible Ayurveda. I reconnected with India, and with Sanjeev, a long-time guide I had met twenty years earlier.',
+      'Today, I teach meditation (Primordial Sound) and Ayurveda as an art of living. I accompany people seeking alignment, and I organise spiritual journeys in the Himalayas, to rediscover silence, strength and the sacred.',
+      'Welcome to this space where traditions meet, where the body is listened to, and where every experience is a door to knowledge.',
+    ],
+    chapters: [
+      { place: 'Austria · Germany', text: 'A childhood sensitive to the invisible, in a setting where it had no place.' },
+      { place: 'Kuwait · Brazil', text: 'Ethnology, the many ways of seeing the world, Candomblé.' },
+      { place: 'Tahiti, for 22 years', text: 'The wisdom of the body, the ancestors and bonds. A Master’s in Oceanian cultures.' },
+      { place: 'Chopra Global · India', text: 'Living Ayurveda, Primordial Sound Meditation, and reuniting with Sanjeev.' },
+    ],
+    credentials: ['Chopra Ayurvedic Health Instructor', 'Chopra Meditation Instructor (Primordial Sound)', 'Master’s year · Oceanian Languages, Cultures and Societies'],
+  },
+  testimonials: [
+    {
+      name: 'Patricia S.',
+      highlight: 'More serenity, confidence and better balance in daily life.',
+      quote:
+        'Eliane really helped me manage my emotions better and find a balance between my body and mind. She also taught me relaxation, exercise and nutrition techniques that helped me a lot. I loved the holistic approach of her classes, combining emotional management, meditation, exercise and nutrition. These tools helped me handle stress better, have more energy and improve my sleep.',
+    },
+    {
+      name: 'Sandra F.',
+      highlight: 'Every class begins with a meditation that I loved.',
+      context: 'Ayurveda Health course',
+      quote:
+        'Eliane gave me an understanding of what Ayurveda is, of how to listen to my body, and of how to set up a morning and evening routine, time for myself! Knowing the Doshas helped me eat in a less inflammatory way. Understanding how stress affects us, its link with sleep, food and the mind… Eliane gives many tips and advice, with kindness and gentleness. A very enriching course, I recommend it!',
+    },
+    { name: 'Fanny P.', highlight: 'For finding balance again when life seems to slip away.', quote: 'Very good for learning to rebalance when it feels like life is slipping away from you.' },
+  ],
+  offerings: {
+    'consultation-decouverte': {
+      title: 'Discovery consultation',
+      kicker: 'A first conversation',
+      summary:
+        'Before any commitment, an online conversation to get to know each other, share what you are looking for and receive my advice on the guidance that would suit you best.',
+      body: ['A caring, listening space to lay the first stone of your path.'],
+      cancellationPolicy: 'To cancel or reschedule, please contact me at least 24 hours in advance.',
+    },
+    'seance-individuelle-en-ligne': {
+      title: 'Individual session online',
+      kicker: 'A space for transformation',
+      summary:
+        'Through the lens of Ayurveda, we identify your constitution, your imbalances and the practical levers to restore energy, clarity and balance.',
+      body: [
+        'We work with the 6 pillars of health: food, movement, sleep, emotions, routine and meditation.',
+        'Every session is unique, and sometimes one is enough to tip things over.',
+      ],
+      cancellationPolicy: 'To cancel or reschedule, please contact me at least 24 hours in advance.',
+    },
+    'seance-individuelle-presentiel': {
+      title: 'Individual session in Punaauia',
+      kicker: 'In person, in Tahiti',
+      summary: 'The same session, in the calm of my space in Punaauia: your constitution, your imbalances and practical rituals to put in place.',
+      body: ['We work with the 6 pillars of health: food, movement, sleep, emotions, routine and meditation.'],
+      cancellationPolicy: 'To cancel or reschedule, please contact me at least 24 hours in advance.',
+    },
+    'suivi-personnalise': {
+      title: 'Personal follow-up',
+      kicker: 'Ongoing guidance',
+      summary: 'A series of sessions for a real, stable and conscious transformation: body, emotions, rhythm, energy.',
+      body: [
+        'Session after session, we explore the key areas of your life together, drawing on the principles of Ayurveda and mindfulness coaching tools.',
+        'You benefit from a caring outside view and practical rituals to apply between sessions. The follow-up is booked with a 4- or 10-session package.',
+      ],
+      priceNote: 'With a 4- or 10-session package',
+      cancellationPolicy: 'To cancel or reschedule, please contact me at least 24 hours in advance.',
+    },
+    'meditation-son-primordial': {
+      title: 'Primordial Sound Meditation course',
+      kicker: '10 hours · 5 sessions of 2 hours',
+      summary:
+        'Learn Primordial Sound Meditation, as taught by Chopra Global: a personal mantra and a simple practice to clear the mind every day.',
+      body: ['The 10 hours are spread over 5 sessions of 2 hours. Sessions can be held over two full days, or spread over several weeks.'],
+    },
+    'formation-ayurveda-sante': {
+      title: 'Ayurveda Health course',
+      kicker: '10 hours in a small group',
+      summary: 'Understand your body, its needs, its rhythm, and learn to take care of it with the essential foundations of Ayurveda.',
+      body: [
+        'You will discover your constitution, the causes of imbalance, and practical tools to adapt your food, sleep, energy and daily routine.',
+        'Living, applicable knowledge to take your health in hand on every level: body, mind, emotions and environment.',
+      ],
+    },
+    'conference-bien-etre': {
+      title: 'Wellbeing talk',
+      kicker: 'For a team or a group',
+      summary: 'An interactive 2-hour talk on Ayurveda or meditation, for a company, a circle of friends or a wellbeing event.',
+      body: [
+        'These gatherings combine living teaching, concrete examples, simple practices and time for discussion. The talk adapts to your audience and your space.',
+        'I bring my projector: all that is needed is a white wall, electricity and a calm place. Between Papara and Papenoo.',
+      ],
+    },
+  } as Record<string, { title: string; kicker: string; summary: string; body: string[]; priceNote?: string; cancellationPolicy?: string }>,
+  packages: {
+    'carnet-4-seances': { title: '4-session package', summary: 'A single package to commit to the whole journey and keep the guidance consistent.' },
+    'carnet-10-seances': {
+      title: '10-session package',
+      summary: 'Personal follow-up, a caring outside view and practical rituals between sessions. A real, stable and conscious transformation.',
+    },
+  } as Record<string, { title: string; summary: string }>,
+  trips: {
+    'kumbha-mela-2027': {
+      title: 'Kumbha Mela · The secret India of the mystics',
+      kicker: '24 February – 15 March 2027',
+      guide: 'With Sanjeev Mehta, tantric master from Haridwar, and Eliane',
+      summary:
+        'Much more than a journey: a 20-day immersion at the heart of the Kumbha Mela, the largest spiritual gathering in the world, then through some of the most iconic places of sacred India.',
+      body: [
+        'A true retreat of yoga, meditation, kriyas and sacred circles, surrounded by sages, yogis and ascetics who have come from all over the Himalayas.',
+        'A small-group journey (12 participants maximum), designed for those who wish to experience India differently.',
+      ],
+      priceNote: 'excluding international flights Papeete – Delhi – Papeete',
+      highlights: [
+        'The Shahi Snan, the royal bath of the Naga Sadhus in the Ganges',
+        'A comfortable camp at the heart of the Kumbha Mela',
+        'Yoga, kriyas and meditations guided every day by Eliane',
+        'Sacred circles and Vedic wisdom with Sanjeev Mehta',
+        '3 preparatory workshops in person in Tahiti',
+      ],
+      itinerary: [
+        ['Day 1', 'Arrival in Delhi, road to Haridwar', 'Private lodge in the Rajaji Tiger Reserve. In the evening, Sanjeev’s talk on the Sacred Circle and an Aura meditation.'],
+        ['Day 2', 'Tigris Estate', 'Morning meditation and yoga, a walk to a temple, a sacred circle and a campfire at sunset.'],
+        ['Day 3', 'Gujjar villages, Rishikesh', 'Meeting the Gujjars, a pastoral people of the Himalayan forests, then a first immersion in the yoga capital.'],
+        ['Day 4', 'The caves of the sages', 'Climb to a meditation cave on the banks of the Ganges, where many yogis have practised for decades.'],
+        ['Day 5', 'Rishikesh', 'Practice at the hotel, the ashram of Anandamayi Ma, the turquoise waters of the sacred Ganges leaving the mountains.'],
+        ['Day 6', 'Haridwar, the sacred city', 'Hari Har Ashram, Geeta Kutir where hundreds of sadhus share their meal, Moti Bazaar market.'],
+        ['Day 7', 'Walk to the village of Ramjiwala', 'Sal forests, century-old banyans, terraced fields and encounters. Ganga Aarti at sunset.'],
+        ['Day 8', 'Settling in at the Kumbha Mela', 'Discovering the Akharas and ashrams, meeting the Naga Sadhus on the eve of the great day.'],
+        ['Day 9', 'Shahi Snan', 'Around 4 a.m., the procession of the Naga Sadhus to the Ganges and the Royal Bath, to the sound of conches and drums.'],
+        ['Day 10', 'Immersion', 'Wandering between the camps, listening to the masters, meditating by the Ganges.'],
+        ['Day 11', 'Second Amrit Snan, night train', 'Last day at the Kumbha Mela, then a night train to Varanasi.'],
+        ['Day 12', 'Varanasi, the city of Shiva', 'The oldest inhabited city in the world. Ganga Aarti at Dashashwamedh Ghat.'],
+        ['Day 13', 'Sarnath', 'In the footsteps of the Buddha, where he gave his first teaching.'],
+        ['Day 14', 'Khajuraho, the art of Tantra', 'UNESCO-listed temples, where body, love, meditation and the sacred are one.'],
+        ['Day 15', 'Orchha', 'The former capital of the Bundela kings, frozen in time on the Betwa river.'],
+        ['Day 16', 'From Orchha to Agra', 'If conditions allow, the Taj Mahal at sunset.'],
+        ['Day 17', 'The Taj Mahal at sunrise', 'Then Agra’s Red Fort and the road back to Delhi.'],
+        ['Day 18', 'Farewell, India', 'Transfer to Delhi international airport.'],
+      ],
+      included: [
+        'Accommodation in double / twin rooms (hotels, Kumbha Mela camp, lodges)',
+        'Full board: breakfast, lunch and dinner',
+        'All transfers and travel from Delhi',
+        'All planned visits and excursions',
+        'Local guide from Haridwar',
+        '3 preparatory workshops in person in Tahiti',
+        'Yoga, kriyas and meditations guided by Eliane',
+        'Sacred circles and teachings with Sanjeev Mehta',
+        'Membership of the association Ayurveda Adventure Tahiti for the year',
+      ],
+      notIncluded: [
+        'International flights Papeete – Delhi – Papeete',
+        'Visa and travel insurance',
+        'Drinks, laundry and personal expenses',
+        'Optional excursions, massages and treatments',
+        'Tips',
+      ],
+      cancellationPolicy: 'Journey cancellation conditions: see the terms of sale. Travel insurance is strongly recommended.',
+    },
+    'ladakh-entre-ciel-et-silence': {
+      title: 'Ladakh · Between sky and silence',
+      kicker: '6 – 24 September 2026',
+      guide: 'With Sanjeev Mehta and Eliane Koller',
+      summary:
+        'A land where one meditates at 4,000 metres, where the elders read the sky and where silence becomes the teacher. Ancient monasteries, remote villages and the Nubra desert.',
+      body: ['This journey will not only be an exploration of the outer world. It will also be a return to oneself: meditation, yogic practices, sacred circles and times of silence.'],
+      priceNote: 'excluding flights Tahiti – Delhi – Tahiti',
+      highlights: [
+        'The monasteries of Shey, Thiksey, Hemis, Lamayuru, Alchi and Diskit',
+        'The Khardung La pass and the Nubra valley',
+        'Daily meditations guided by Eliane',
+        'An intimate, genuine group',
+      ],
+      itinerary: [
+        ['Day 1', 'Delhi', 'Arrival and rest, a first immersion in the energy of the capital.'],
+        ['Day 2', 'Flight to Leh', 'A flight over the Himalayas, gentle acclimatisation to altitude.'],
+        ['Day 3', 'Shey, Thiksey & Hemis', 'Meditation in the gompas and teachings on Vajrayana.'],
+        ['Days 4–5', 'Temisgam valley', 'Ladakhi hospitality, sacred circles, timeless walks.'],
+        ['Day 6', 'Lamayuru, the “Moonland”', 'Lunar landscapes and guided spiritual practice.'],
+        ['Day 7', 'Alchi and Likir', 'Contemplation on the banks of the Indus.'],
+        ['Days 8–9', 'Nubra valley', 'The Khardung La pass, sand dunes and Bactrian camels.'],
+        ['Day 10', 'Diskit & Hunder', 'Diskit monastery, village life, prayer and silence.'],
+        ['Day 11', 'Back to Leh', 'Time for integration and rest.'],
+        ['Days 12–13', 'Shanti Stupa', 'Closing ceremony and Sanjeev’s final teachings.'],
+        ['Day 14', 'Back to Delhi', 'A night in Delhi before international flights.'],
+      ],
+      included: [
+        'Membership of the association Ayurveda Adventure Tahiti',
+        'Flight Delhi – Leh – Delhi',
+        'Double / twin accommodation, full board',
+        'All transfers and vehicles in Ladakh',
+        '“Inner Line” permit and entrance fees',
+        'Three preparatory sessions in Tahiti',
+      ],
+      notIncluded: ['Flight Papeete – Delhi – Papeete', 'Travel insurance, visa and taxes', 'Tips and personal expenses'],
+      extras: ['3-day extension to Agra and the Taj Mahal'],
+    },
+  } as Record<string, Record<string, unknown>>,
+  categories: { Ayurveda: 'Ayurveda', 'Carnet de voyage': 'Travel notes', Méditation: 'Meditation', 'Sagesse védique': 'Vedic wisdom' } as Record<string, string>,
+  posts: {
+    'comprendre-les-4-grands-cousins': {
+      title: 'Understanding the 4 great cousins: Ayurveda, Yoga, Tantra, Vedanta',
+      excerpt: 'Ayurveda is the practical foundation for keeping body and mind healthy, the basis of all the other paths…',
+    },
+    'laisser-ses-limitations-derriere-soi': { title: 'You can only grow if you leave your limitations behind.', excerpt: 'So there we were in the Himalayas, driving for hours on winding roads…' },
+    'nous-avons-deja-tout': { title: 'We always seek more, when we already have everything.', excerpt: '28 hours after leaving Tahiti, here I am at exit 4 of Delhi’s international airport…' },
+    'nourrir-ses-sens': { title: 'We become what we feed our senses.', excerpt: 'Slowly arriving in India. A 15-hour time difference to absorb…' },
+    'ecouter-son-coeur-et-son-corps': { title: 'Learning to listen to your heart… and your body!', excerpt: 'In The Alchemist, Paulo Coelho speaks of the soul of the world and of the heart learning to communicate with it…' },
+    'fiu-de-tourner-en-rond': { title: '“Fiu” of going round in circles?', excerpt: 'You are capable of far more than you imagine! A seven-week journey through the seven chakras…' },
+    'revision-et-vidange': { title: 'Service and oil change', excerpt: 'Vivek sits on his sofa and presents the Panchakarma programme I will follow over the next two weeks…' },
+  } as Record<string, { title: string; excerpt: string }>,
+}

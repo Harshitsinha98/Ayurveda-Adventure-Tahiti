@@ -1,8 +1,8 @@
 export const NAV = [
-  { href: '/offres', label: 'Offres' },
-  { href: '/voyage-en-inde', label: 'Voyages en Inde' },
-  { href: '/evenements', label: 'Événements' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/a-propos', label: 'À propos' },
-  { href: '/contact', label: 'Contact' },
-]
+  { href: '/offres', key: 'offers' },
+  { href: '/voyage-en-inde', key: 'trips' },
+  { href: '/evenements', key: 'events' },
+  { href: '/blog', key: 'blog' },
+  { href: '/a-propos', key: 'about' },
+  { href: '/contact', key: 'contact' },
+] as const

@@ -11,13 +11,15 @@ import { lexicalToText, RichText } from '@/components/site/RichText'
 import { PostCard } from '@/components/site/ui'
 import { img, payloadClient } from '@/lib/payload'
 import { postPhoto } from '@/lib/photos'
-import { listPosts, postCardProps } from '@/lib/queries'
+import { dateLocale, type Lang } from '@/i18n/dictionary'
+import { getT } from '@/i18n/server'
+import { listPosts, localeOpts, postCardProps } from '@/lib/queries'
 import type { Post } from '@/payload-types'
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
 type P = { params: Promise<{ slug: string }> }
 
-async function getPost(slug: string) {
+async function getPost(slug: string, lang: Lang | 'fr' = 'fr') {
   const payload = await payloadClient()
   const { isEnabled: draft } = await draftMode()
   const r = await payload.find({
@@ -26,12 +28,14 @@ async function getPost(slug: string) {
     draft,
     limit: 1,
     depth: 1,
+    ...localeOpts(lang),
   })
   return r.docs[0] as Post | undefined
 }
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
-  const p = await getPost((await params).slug)
+  const { lang } = await getT()
+  const p = await getPost((await params).slug, lang)
   if (!p) return {}
   const og = img(p.seo?.image ?? p.cover, 'card')
   return {
@@ -44,10 +48,13 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
 
 export default async function PostPage({ params }: P) {
   const { slug } = await params
-  const post = await getPost(slug)
+  const { lang, t } = await getT()
+  const post = await getPost(slug, lang)
   if (!post) notFound()
   const cover = img(post.cover, 'hero') ?? postPhoto(post.slug)
-  const more = (await listPosts(4)).filter((p) => p.id !== post.id).slice(0, 3)
+  // English body still identical to the French one: tell the reader the article is in French.
+  const frOnly = lang === 'en' && JSON.stringify((await getPost(slug, 'fr'))?.content) === JSON.stringify(post.content)
+  const more = (await listPosts(4, undefined, lang)).filter((p) => p.id !== post.id).slice(0, 3)
   const site = process.env.NEXT_PUBLIC_SITE_URL || ''
   const cat = (post.categories?.[0] as { title?: string } | undefined)?.title
 
@@ -59,8 +66,8 @@ export default async function PostPage({ params }: P) {
           <Reveal>
             <p className="eyebrow text-saffron-600">
               {cat}
-              {post.publishedAt && ` · ${new Date(post.publishedAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`}
-              {post.readingMinutes ? ` · ${post.readingMinutes} min de lecture` : ''}
+              {post.publishedAt && ` · ${new Date(post.publishedAt).toLocaleDateString(dateLocale(lang), { day: 'numeric', month: 'long', year: 'numeric' })}`}
+              {post.readingMinutes ? ` · ${t.blog.minutes(post.readingMinutes)}` : ''}
             </p>
             <h1 className="mt-6 text-[clamp(2.6rem,6vw,5rem)] leading-[1] text-plum-800">{post.title}</h1>
             {post.excerpt && <p className="mx-auto mt-6 max-w-2xl text-lg text-ink-soft">{post.excerpt}</p>}
@@ -80,25 +87,26 @@ export default async function PostPage({ params }: P) {
             <ShareButtons url={`${site}/blog/${post.slug}`} title={post.title} />
           </div>
         </aside>
-        <div>
+        <div lang={frOnly ? 'fr' : undefined}>
+          {frOnly && <p lang="en" className="mb-8 border-l-2 border-saffron-500/60 pl-4 text-sm italic text-ink-soft">{t.blog.frenchOnly}</p>}
           <RichText data={post.content} />
           <div className="mt-14 border-t border-plum-800/10 pt-8 lg:hidden">
             <ShareButtons url={`${site}/blog/${post.slug}`} title={post.title} />
           </div>
           <div className="mt-14 rounded-[3px] bg-plum-800 p-8 text-sand-50">
-            <p className="font-display text-3xl">Envie d’aller plus loin ?</p>
-            <p className="mt-2 text-sand-200/80">Un premier échange offert de 20 minutes pour faire connaissance.</p>
-            <Link href="/offres/consultation-decouverte" className="mt-6 inline-block rounded-[2px] bg-saffron-500 px-6 py-3 text-sm font-semibold text-plum-950 hover:bg-saffron-300">Réserver</Link>
+            <p className="font-display text-3xl">{t.blog.more}</p>
+            <p className="mt-2 text-sand-200/80">{t.blog.moreText}</p>
+            <Link href="/offres/consultation-decouverte" className="mt-6 inline-block rounded-[2px] bg-saffron-500 px-6 py-3 text-sm font-semibold text-plum-950 hover:bg-saffron-300">{t.blog.moreCta}</Link>
           </div>
         </div>
       </div>
       {more.length > 0 && (
         <section className="bg-sand-50 py-20">
           <div className="container-x">
-            <p className="eyebrow mb-10 text-saffron-600">À lire aussi</p>
+            <p className="eyebrow mb-10 text-saffron-600">{t.blog.alsoRead}</p>
             <div className="grid gap-10 md:grid-cols-3">
               {more.map((p) => (
-                <PostCard key={p.id} {...postCardProps(p)} />
+                <PostCard key={p.id} {...postCardProps(p)} lang={lang} />
               ))}
             </div>
           </div>

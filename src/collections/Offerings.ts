@@ -32,7 +32,7 @@ export const Offerings: CollectionConfig = {
         {
           label: 'Présentation',
           fields: [
-            { name: 'title', label: 'Titre', type: 'text', required: true },
+            { name: 'title', localized: true, label: 'Titre', type: 'text', required: true },
             {
               type: 'row',
               fields: [
@@ -64,9 +64,9 @@ export const Offerings: CollectionConfig = {
                 },
               ],
             },
-            { name: 'kicker', label: 'Accroche courte', type: 'text', admin: { description: 'Ex. « Un premier échange »' } },
-            { name: 'summary', label: 'Résumé', type: 'textarea', required: true },
-            { name: 'description', label: 'Description complète', type: 'richText' },
+            { name: 'kicker', localized: true, label: 'Accroche courte', type: 'text', admin: { description: 'Ex. « Un premier échange »' } },
+            { name: 'summary', localized: true, label: 'Résumé', type: 'textarea', required: true },
+            { name: 'description', localized: true, label: 'Description complète', type: 'richText' },
             { name: 'image', label: 'Image principale', type: 'upload', relationTo: 'media' },
             {
               name: 'gallery',
@@ -76,7 +76,7 @@ export const Offerings: CollectionConfig = {
               fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
             },
             {
-              name: 'highlights',
+              name: 'highlights', localized: true,
               label: 'Points forts',
               type: 'array',
               fields: [{ name: 'text', label: 'Point fort', type: 'text', required: true }],
@@ -105,7 +105,7 @@ export const Offerings: CollectionConfig = {
                 },
               ],
             },
-            { name: 'priceNote', label: 'Précision sur le prix', type: 'text', admin: { description: 'Ex. « hors vols Papeete – Delhi »' } },
+            { name: 'priceNote', localized: true, label: 'Précision sur le prix', type: 'text', admin: { description: 'Ex. « hors vols Papeete – Delhi »' } },
             {
               name: 'bookingMode',
               label: 'Réservation en ligne',
@@ -128,7 +128,7 @@ export const Offerings: CollectionConfig = {
                 {
                   type: 'row',
                   fields: [
-                    { name: 'label', label: 'Nom du tarif', type: 'text', required: true },
+                    { name: 'label', localized: true, label: 'Nom du tarif', type: 'text', required: true },
                     { name: 'price', label: 'Prix (XPF)', type: 'number', required: true, min: 0 },
                   ],
                 },
@@ -143,11 +143,11 @@ export const Offerings: CollectionConfig = {
                 {
                   type: 'row',
                   fields: [
-                    { name: 'label', label: 'Option', type: 'text', required: true },
+                    { name: 'label', localized: true, label: 'Option', type: 'text', required: true },
                     { name: 'price', label: 'Prix (XPF)', type: 'number', required: true, min: 0 },
                   ],
                 },
-                { name: 'description', label: 'Précision', type: 'text' },
+                { name: 'description', localized: true, label: 'Précision', type: 'text' },
               ],
             },
             {
@@ -185,7 +185,7 @@ export const Offerings: CollectionConfig = {
               defaultValue: false,
               admin: { condition: is('seance') },
             },
-            { name: 'cancellationPolicy', label: 'Conditions d’annulation', type: 'textarea' },
+            { name: 'cancellationPolicy', localized: true, label: 'Conditions d’annulation', type: 'textarea' },
             {
               name: 'location',
               label: 'Adresse / lieu',
@@ -214,10 +214,10 @@ export const Offerings: CollectionConfig = {
                 { name: 'tripEnd', label: 'Retour', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
               ],
             },
-            { name: 'tripRegion', label: 'Région', type: 'text', admin: { description: 'Ex. Himalaya · Uttarakhand' } },
-            { name: 'guide', label: 'Accompagnement', type: 'text' },
+            { name: 'tripRegion', localized: true, label: 'Région', type: 'text', admin: { description: 'Ex. Himalaya · Uttarakhand' } },
+            { name: 'guide', localized: true, label: 'Accompagnement', type: 'text' },
             {
-              name: 'itinerary',
+              name: 'itinerary', localized: true,
               label: 'Itinéraire jour par jour',
               type: 'array',
               fields: [
@@ -225,20 +225,20 @@ export const Offerings: CollectionConfig = {
                   type: 'row',
                   fields: [
                     { name: 'day', label: 'Jour', type: 'text', required: true, admin: { width: '25%' } },
-                    { name: 'title', label: 'Étape', type: 'text', required: true },
+                    { name: 'title', localized: true, label: 'Étape', type: 'text', required: true },
                   ],
                 },
                 { name: 'text', label: 'Description', type: 'textarea' },
               ],
             },
             {
-              name: 'included',
+              name: 'included', localized: true,
               label: 'Le prix comprend',
               type: 'array',
               fields: [{ name: 'text', type: 'text', required: true }],
             },
             {
-              name: 'notIncluded',
+              name: 'notIncluded', localized: true,
               label: 'Le prix ne comprend pas',
               type: 'array',
               fields: [{ name: 'text', type: 'text', required: true }],

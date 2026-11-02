@@ -55,6 +55,14 @@ export default buildConfig({
     dateFormat: 'd MMMM yyyy',
   },
   i18n: { supportedLanguages: { fr, en }, fallbackLanguage: 'fr' },
+  localization: {
+    locales: [
+      { label: 'Français', code: 'fr' },
+      { label: 'English', code: 'en' },
+    ],
+    defaultLocale: 'fr',
+    fallback: true,
+  },
   collections: [
     Bookings,
     Offerings,

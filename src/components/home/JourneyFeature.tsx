@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRef } from 'react'
 
 import { Reveal } from '@/components/motion/primitives'
+import { useT } from '@/i18n/client'
 import type { Img } from '@/lib/payload'
 
 /** Featured journey: a drifting photo collage and a countdown to departure. */
@@ -32,6 +33,7 @@ export function JourneyFeature({
   images: Img[]
 }) {
   const ref = useRef<HTMLElement>(null)
+  const t = useT().journey
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const a = useTransform(scrollYProgress, [0, 1], [80, -80])
   const b = useTransform(scrollYProgress, [0, 1], [-40, 60])
@@ -62,7 +64,7 @@ export function JourneyFeature({
 
         <div className="order-1 lg:order-2">
           <Reveal>
-            <p className="eyebrow text-saffron-600">Prochain voyage · {kicker}</p>
+            <p className="eyebrow text-saffron-600">{t.next} · {kicker}</p>
             <h2 id="journey-title" className="mt-5 text-[clamp(2.8rem,6vw,5.4rem)] leading-[0.95] text-plum-800">
               {titleMain}
               {titleSub && <em className="mt-2 block text-[0.55em] leading-tight text-saffron-600">{titleSub}</em>}
@@ -74,25 +76,25 @@ export function JourneyFeature({
             <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-y border-plum-800/12 py-6">
               {daysLeft != null && daysLeft > 0 && (
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">Départ dans</dt>
-                  <dd className="font-display mt-1 text-4xl text-plum-800">{daysLeft} <span className="text-lg">jours</span></dd>
+                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">{t.departsIn}</dt>
+                  <dd className="font-display mt-1 text-4xl text-plum-800">{daysLeft} <span className="text-lg">{t.days}</span></dd>
                 </div>
               )}
               {seatsLeft != null && (
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">Places</dt>
-                  <dd className="font-display mt-1 text-4xl text-plum-800">{seatsLeft} <span className="text-lg">restantes</span></dd>
+                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">{t.seats}</dt>
+                  <dd className="font-display mt-1 text-4xl text-plum-800">{seatsLeft} <span className="text-lg">{t.left}</span></dd>
                 </div>
               )}
               {price && (
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">À partir de</dt>
+                  <dt className="text-xs uppercase tracking-[0.16em] text-ink-soft">{t.from}</dt>
                   <dd className="font-display mt-1 text-3xl text-plum-800">{price}</dd>
                 </div>
               )}
             </dl>
             <Link href={`/voyage-en-inde/${slug}`} className="group mt-10 inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">
-              Découvrir le voyage
+              {t.discover}
               <ArrowRight size={16} strokeWidth={1.5} className="transition-transform duration-500 group-hover:translate-x-1" />
             </Link>
           </Reveal>

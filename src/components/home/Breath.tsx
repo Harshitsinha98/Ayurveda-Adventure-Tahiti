@@ -5,19 +5,21 @@ import { Pause, Play } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 
 import { Reveal } from '@/components/motion/primitives'
+import { useT } from '@/i18n/client'
 
 /**
  * A guided breathing circle (4 s in · 4 s hold · 6 s out).
  * A small moment of practice inside the website, in the spirit of Eliane's teaching.
  */
 const PHASES = [
-  { label: 'Inspire', hint: 'par le nez, lentement', seconds: 4, to: 1 },
-  { label: 'Retiens', hint: 'sans effort', seconds: 4, to: 1 },
-  { label: 'Expire', hint: 'longuement, en relâchant', seconds: 6, to: 0 },
+  { seconds: 4, to: 1 },
+  { seconds: 4, to: 1 },
+  { seconds: 6, to: 0 },
 ] as const
 
 export function Breath() {
   const reduce = useReducedMotion()
+  const t = useT().breath
   const [running, setRunning] = useState(false)
   const [phase, setPhase] = useState(0)
   const [cycles, setCycles] = useState(0)
@@ -45,7 +47,7 @@ export function Breath() {
     }
   }, [running, phase, progress, reduce])
 
-  const current = PHASES[phase]
+  const current = t.phases[phase]
 
   return (
     <section className="relative overflow-hidden bg-plum-900 py-28 text-sand-50 lg:py-36" aria-labelledby="breath-title">
@@ -53,13 +55,12 @@ export function Breath() {
       <div className="container-x relative grid items-center gap-16 lg:grid-cols-2">
         <div>
           <Reveal>
-            <p className="eyebrow text-saffron-300">Une minute pour toi</p>
+            <p className="eyebrow text-saffron-300">{t.eyebrow}</p>
             <h2 id="breath-title" className="mt-5 text-[clamp(2.6rem,5vw,4.4rem)]">
-              Avant de lire plus loin, <em className="text-saffron-300">respire avec moi.</em>
+              {t.title} <em className="text-saffron-300">{t.accent}</em>
             </h2>
             <p className="mt-6 max-w-md text-lg text-sand-200/80">
-              Trois respirations suffisent pour sentir le mental ralentir. C’est ainsi que commence chacun de mes cours :
-              par un retour au souffle.
+              {t.text}
             </p>
           </Reveal>
           <Reveal delay={0.15}>
@@ -73,10 +74,10 @@ export function Breath() {
                 className="inline-flex items-center gap-3 rounded-[2px] border border-saffron-300/60 px-6 py-3.5 text-sm font-semibold text-saffron-300 transition hover:bg-saffron-300 hover:text-plum-950"
               >
                 {running ? <Pause size={16} /> : <Play size={16} />}
-                {running ? 'Faire une pause' : 'Commencer'}
+                {running ? t.pause : t.start}
               </button>
               <span className="text-sm text-sand-200/70" aria-live="polite">
-                {cycles > 0 ? `${cycles} respiration${cycles > 1 ? 's' : ''}` : 'Cycle 4 · 4 · 6'}
+                {cycles > 0 ? t.breaths(cycles) : t.cycle}
               </span>
             </div>
           </Reveal>
@@ -90,8 +91,8 @@ export function Breath() {
           <div className="relative text-center" aria-live="polite">
             <AnimatePresence mode="wait">
               <motion.div key={running ? current.label : 'idle'} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.6 }}>
-                <p className="font-display text-5xl text-sand-50">{running ? current.label : 'Prêt·e ?'}</p>
-                <p className="mt-2 text-xs uppercase tracking-[0.24em] text-saffron-300/80">{running ? current.hint : 'Installe-toi confortablement'}</p>
+                <p className="font-display text-5xl text-sand-50">{running ? current.label : t.ready}</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.24em] text-saffron-300/80">{running ? current.hint : t.readyHint}</p>
               </motion.div>
             </AnimatePresence>
           </div>

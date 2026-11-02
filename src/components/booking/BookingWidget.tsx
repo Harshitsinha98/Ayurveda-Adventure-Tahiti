@@ -5,6 +5,8 @@ import { ArrowLeft, ArrowRight, CalendarDays, Check, CreditCard, Landmark, Loade
 import { useEffect, useMemo, useState } from 'react'
 
 import { EASE } from '@/components/motion/primitives'
+import { useLang } from '@/i18n/client'
+import { dateLocale, dictionaries } from '@/i18n/dictionary'
 
 export type WidgetOccurrence = {
   id: number | string
@@ -37,7 +39,7 @@ const TAHITI = 'Pacific/Tahiti'
 const nf = new Intl.NumberFormat('fr-FR')
 const xpf = (n: number) => `${nf.format(n)} XPF`
 
-const fmt = (iso: string, opts: Intl.DateTimeFormatOptions, tz = TAHITI) => new Date(iso).toLocaleString('fr-FR', { ...opts, timeZone: tz })
+const fmtIn = (locale: string) => (iso: string, opts: Intl.DateTimeFormatOptions, tz = TAHITI) => new Date(iso).toLocaleString(locale, { ...opts, timeZone: tz })
 
 function useBrowserTz() {
   const [tz, setTz] = useState<string>(TAHITI)
@@ -47,6 +49,9 @@ function useBrowserTz() {
 
 export function BookingWidget({ offering, occurrences = [] }: { offering: WidgetOffering; occurrences?: WidgetOccurrence[] }) {
   const tz = useBrowserTz()
+  const lang = useLang()
+  const t = dictionaries[lang].bw
+  const fmt = fmtIn(dateLocale(lang))
   const isSeance = offering.kind === 'seance'
   const isTrip = offering.kind === 'voyage'
   const free = offering.bookingMode === 'free' || offering.price === 0
@@ -63,7 +68,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
   const [payment, setPayment] = useState<'card' | 'transfer' | 'credit'>('card')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', country: 'Polynésie française', message: '' })
+  const [contact, setContact] = useState({ firstName: '', lastName: '', email: '', phone: '', country: t.countryDefault, message: '' })
   const bind = (k: keyof typeof contact) => ({
     name: k,
     value: contact[k],
@@ -93,9 +98,9 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
   const deposit = offering.depositPercent && offering.depositPercent < 100 ? Math.round((total * offering.depositPercent) / 100) : total
 
   const hasOptions = (offering.priceOptions?.length ?? 0) > 0 || (offering.extras?.length ?? 0) > 0 || max > 1
-  const steps = ['Date', ...(hasOptions ? ['Options'] : []), 'Coordonnées', 'Confirmation']
+  const steps = ['date', ...(hasOptions ? ['options'] : []), 'details', 'confirm']
   const stepName = steps[step]
-  const canNext = stepName === 'Date' ? Boolean(isSeance ? slot : occ) : true
+  const canNext = stepName === 'date' ? Boolean(isSeance ? slot : occ) : true
 
   async function submit(form: HTMLFormElement) {
     const f = new FormData(form)
@@ -133,7 +138,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
       window.location.assign(data.redirectUrl)
       return
     }
-    setError(data?.error || 'Impossible de finaliser la réservation. Vérifiez votre connexion et réessayez.')
+    setError(data?.error || t.error)
     setSubmitting(false)
     if (res?.status === 409 && isSeance) {
       setSlot(null)
@@ -148,16 +153,16 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
     <div className="min-w-0 overflow-hidden rounded-[3px] border border-plum-800/10 bg-sand-50 shadow-[0_40px_80px_-50px_rgba(42,11,28,0.5)]">
       <div className="flex items-center justify-between gap-4 border-b border-plum-800/10 px-6 py-5 sm:px-8">
         <div>
-          <p className="eyebrow text-[0.65rem] text-saffron-600">Réserver</p>
+          <p className="eyebrow text-[0.65rem] text-saffron-600">{t.book}</p>
           <p className="font-display text-2xl text-plum-800">{offering.title}</p>
         </div>
-        <ol className="hidden items-center gap-2 sm:flex" aria-label="Étapes">
+        <ol className="hidden items-center gap-2 sm:flex" aria-label={t.stepsLabel}>
           {steps.map((s, i) => (
             <li key={s} className="flex items-center gap-2" aria-current={i === step ? 'step' : undefined}>
               <span className={`grid h-7 w-7 place-items-center rounded-full text-xs font-semibold transition ${i < step ? 'bg-sage-500 text-sand-50' : i === step ? 'bg-plum-800 text-sand-50' : 'bg-sand-200 text-ink-soft'}`}>
                 {i < step ? <Check size={14} /> : i + 1}
               </span>
-              <span className="sr-only">{s}</span>
+              <span className="sr-only">{t.steps[s]}</span>
             </li>
           ))}
         </ol>
@@ -167,22 +172,22 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
         className="px-6 py-7 sm:px-8"
         onSubmit={(e) => {
           e.preventDefault()
-          if (stepName === 'Confirmation') submit(e.currentTarget)
+          if (stepName === 'confirm') submit(e.currentTarget)
           else if (canNext) setStep((s) => s + 1)
         }}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={stepName} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.4, ease: EASE }}>
-            {stepName === 'Date' && isSeance && (
+            {stepName === 'date' && isSeance && (
               <fieldset className="min-w-0">
                 <legend className="mb-4 flex items-center gap-2 text-sm font-semibold text-ink-soft">
-                  <CalendarDays size={16} /> Choisissez un jour puis un horaire
+                  <CalendarDays size={16} /> {t.pickDaySlot}
                 </legend>
-                {!slots && <p className="flex items-center gap-2 text-ink-soft"><Loader2 className="animate-spin" size={16} /> Chargement des disponibilités…</p>}
-                {slots && dayKeys.length === 0 && <p className="text-ink-soft">Aucun créneau disponible pour le moment. Écrivez-moi et nous trouverons un moment ensemble.</p>}
+                {!slots && <p className="flex items-center gap-2 text-ink-soft"><Loader2 className="animate-spin" size={16} /> {t.loading}</p>}
+                {slots && dayKeys.length === 0 && <p className="text-ink-soft">{t.noSlots}</p>}
                 {dayKeys.length > 0 && (
                   <>
-                    <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-3 [scrollbar-width:thin]" role="listbox" aria-label="Jours disponibles">
+                    <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-3 [scrollbar-width:thin]" role="listbox" aria-label={t.days}>
                       {dayKeys.map((k) => {
                         const d = new Date(`${k}T12:00:00-10:00`)
                         const on = k === day
@@ -205,7 +210,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                         )
                       })}
                     </div>
-                    <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4" role="listbox" aria-label="Horaires">
+                    <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-4" role="listbox" aria-label={t.times}>
                       {(day ? slots![day] : []).map((s) => {
                         const on = slot?.start === s.start
                         return (
@@ -223,9 +228,9 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                       })}
                     </div>
                     <p className="mt-4 text-xs text-ink-soft">
-                      Heures de Tahiti.
+                      {t.tahitiTime}
                       {slot && tz !== TAHITI && (
-                        <> Chez vous ({tz.split('/').pop()?.replace('_', ' ')}) : <strong>{fmt(slot.start, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }, tz)}</strong>.</>
+                        <> {t.atHome} ({tz.split('/').pop()?.replace('_', ' ')}) : <strong>{fmt(slot.start, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }, tz)}</strong>.</>
                       )}
                     </p>
                   </>
@@ -233,10 +238,10 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
               </fieldset>
             )}
 
-            {stepName === 'Date' && !isSeance && (
+            {stepName === 'date' && !isSeance && (
               <fieldset className="min-w-0">
-                <legend className="mb-4 text-sm font-semibold text-ink-soft">{isTrip ? 'Départ' : 'Choisissez une date'}</legend>
-                {occurrences.length === 0 && <p className="text-ink-soft">Les prochaines dates seront bientôt annoncées. Inscrivez-vous à la newsletter ou écrivez-moi pour être prévenu·e.</p>}
+                <legend className="mb-4 text-sm font-semibold text-ink-soft">{isTrip ? t.departure : t.pickDate}</legend>
+                {occurrences.length === 0 && <p className="text-ink-soft">{t.noDates}</p>}
                 <div className="space-y-2">
                   {occurrences.map((o) => {
                     const on = occ?.id === o.id
@@ -258,13 +263,13 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                             {fmt(o.startsAt, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
                           </span>
                           <span className="text-sm text-ink-soft">
-                            {o.endsAt && isTrip ? `Retour le ${fmt(o.endsAt, { day: 'numeric', month: 'long' })}` : fmt(o.startsAt, { hour: '2-digit', minute: '2-digit' })}
-                            {o.scheduleCount ? ` · ${o.scheduleCount} séances` : ''}
+                            {o.endsAt && isTrip ? `${t.returnOn} ${fmt(o.endsAt, { day: 'numeric', month: 'long' })}` : fmt(o.startsAt, { hour: '2-digit', minute: '2-digit' })}
+                            {o.scheduleCount ? ` · ${t.sessions(o.scheduleCount)}` : ''}
                             {o.location ? ` · ${o.location}` : ''}
                           </span>
                         </span>
                         <span className={`whitespace-nowrap text-sm font-semibold ${full ? 'text-ink-soft' : o.seatsLeft <= 3 ? 'text-saffron-600' : 'text-sage-700'}`}>
-                          {full ? 'Complet' : `${o.seatsLeft} place${o.seatsLeft > 1 ? 's' : ''}`}
+                          {full ? t.full : t.places(o.seatsLeft)}
                         </span>
                       </button>
                     )
@@ -273,13 +278,13 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
               </fieldset>
             )}
 
-            {stepName === 'Options' && (
+            {stepName === 'options' && (
               <div className="space-y-7">
                 {(offering.priceOptions?.length ?? 0) > 0 && (
                   <fieldset className="min-w-0">
-                    <legend className="label">Tarif</legend>
+                    <legend className="label">{t.rate}</legend>
                     <div className="space-y-2">
-                      {[{ label: 'Tarif normal', price: occ?.priceOverride ?? offering.price ?? 0 }, ...offering.priceOptions!].map((p, i) => {
+                      {[{ label: t.normalRate, price: occ?.priceOverride ?? offering.price ?? 0 }, ...offering.priceOptions!].map((p, i) => {
                         const v = i === 0 ? null : i - 1
                         return (
                           <label key={p.label} className={`flex items-center justify-between rounded-[3px] border px-4 py-3 ${priceOption === v ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12'}`}>
@@ -296,7 +301,7 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                 )}
                 {(offering.extras?.length ?? 0) > 0 && (
                   <fieldset className="min-w-0">
-                    <legend className="label">Options</legend>
+                    <legend className="label">{t.options}</legend>
                     <div className="space-y-2">
                       {offering.extras!.map((x, i) => (
                         <label key={x.label} className={`flex items-center justify-between gap-4 rounded-[3px] border px-4 py-3 ${extras.includes(i) ? 'border-plum-800 bg-plum-100' : 'border-plum-800/12'}`}>
@@ -315,16 +320,16 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                 )}
                 {max > 1 && (
                   <fieldset className="min-w-0">
-                    <legend className="label">Nombre de participants</legend>
+                    <legend className="label">{t.participants}</legend>
                     <div className="flex items-center gap-3">
-                      <button type="button" aria-label="Moins" onClick={() => setQty((q) => Math.max(1, q - 1))} className="h-11 w-11 rounded-full border border-plum-800/20 text-xl text-plum-800">−</button>
+                      <button type="button" aria-label={t.less} onClick={() => setQty((q) => Math.max(1, q - 1))} className="h-11 w-11 rounded-full border border-plum-800/20 text-xl text-plum-800">−</button>
                       <span className="font-display w-10 text-center text-3xl text-plum-800" aria-live="polite">{qty}</span>
-                      <button type="button" aria-label="Plus" onClick={() => setQty((q) => Math.min(maxQty, q + 1))} className="h-11 w-11 rounded-full border border-plum-800/20 text-xl text-plum-800">+</button>
+                      <button type="button" aria-label={t.more} onClick={() => setQty((q) => Math.min(maxQty, q + 1))} className="h-11 w-11 rounded-full border border-plum-800/20 text-xl text-plum-800">+</button>
                     </div>
                     {qty > 1 && (
                       <div className="mt-4 space-y-2">
                         {Array.from({ length: qty - 1 }).map((_, i) => (
-                          <input key={i} className="field" placeholder={`Nom du participant ${i + 2}`} value={participants[i] ?? ''} onChange={(e) => setParticipants((p) => Object.assign([...p], { [i]: e.target.value }))} />
+                          <input key={i} className="field" placeholder={t.participantName(i + 2)} value={participants[i] ?? ''} onChange={(e) => setParticipants((p) => Object.assign([...p], { [i]: e.target.value }))} />
                         ))}
                       </div>
                     )}
@@ -333,48 +338,48 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
               </div>
             )}
 
-            {stepName === 'Coordonnées' && (
+            {stepName === 'details' && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="label" htmlFor="bw-first">Prénom *</label>
+                  <label className="label" htmlFor="bw-first">{t.firstName} *</label>
                   <input id="bw-first" {...bind('firstName')} required autoComplete="given-name" className="field" />
                 </div>
                 <div>
-                  <label className="label" htmlFor="bw-last">Nom *</label>
+                  <label className="label" htmlFor="bw-last">{t.lastName} *</label>
                   <input id="bw-last" {...bind('lastName')} required autoComplete="family-name" className="field" />
                 </div>
                 <div>
-                  <label className="label" htmlFor="bw-email">E-mail *</label>
+                  <label className="label" htmlFor="bw-email">{t.email} *</label>
                   <input id="bw-email" {...bind('email')} type="email" required autoComplete="email" className="field" />
                 </div>
                 <div>
-                  <label className="label" htmlFor="bw-phone">Téléphone</label>
+                  <label className="label" htmlFor="bw-phone">{t.phone}</label>
                   <input id="bw-phone" {...bind('phone')} type="tel" autoComplete="tel" className="field" placeholder="+689 …" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="label" htmlFor="bw-country">Pays de résidence</label>
+                  <label className="label" htmlFor="bw-country">{t.country}</label>
                   <input id="bw-country" {...bind('country')} autoComplete="country-name" className="field" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="label" htmlFor="bw-msg">Un mot pour Eliane (facultatif)</label>
-                  <textarea id="bw-msg" {...bind('message')} rows={3} className="field" placeholder="Ce que vous recherchez, une question…" />
+                  <label className="label" htmlFor="bw-msg">{t.message}</label>
+                  <textarea id="bw-msg" {...bind('message')} rows={3} className="field" placeholder={t.messagePh} />
                 </div>
               </div>
             )}
 
-            {stepName === 'Confirmation' && (
+            {stepName === 'confirm' && (
               <div className="space-y-6">
                 <div className="rounded-[3px] bg-sand-100 p-5 text-sm">
                   <p className="font-display text-xl text-plum-800">{offering.title}</p>
                   <p className="mt-1 text-ink-soft">
                     {slot ? fmt(slot.start, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : occ ? fmt(occ.startsAt, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) : ''}
-                    {qty > 1 ? ` · ${qty} participants` : ''}
+                    {qty > 1 ? ` · ${t.participantsN(qty)}` : ''}
                   </p>
                   {!free && (
                     <dl className="mt-4 space-y-1 border-t border-plum-800/10 pt-4">
-                      <div className="flex justify-between"><dt>Total</dt><dd className="font-semibold text-plum-800">{xpf(total)}</dd></div>
+                      <div className="flex justify-between"><dt>{t.total}</dt><dd className="font-semibold text-plum-800">{xpf(total)}</dd></div>
                       {deposit < total && payment === 'card' && (
-                        <div className="flex justify-between text-saffron-600"><dt>Acompte à régler maintenant ({offering.depositPercent} %)</dt><dd className="font-semibold">{xpf(deposit)}</dd></div>
+                        <div className="flex justify-between text-saffron-600"><dt>{t.depositNow(offering.depositPercent ?? 0)}</dt><dd className="font-semibold">{xpf(deposit)}</dd></div>
                       )}
                     </dl>
                   )}
@@ -382,11 +387,11 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
 
                 {!free && (
                   <fieldset className="min-w-0">
-                    <legend className="label">Paiement</legend>
+                    <legend className="label">{t.payment}</legend>
                     <div className="grid gap-2">
-                      <PayOption icon={<CreditCard size={18} />} on={payment === 'card'} onSelect={() => setPayment('card')} title="Carte bancaire en ligne" text="Visa, Mastercard · paiement sécurisé 3-D Secure en XPF" />
-                      {isTrip && <PayOption icon={<Landmark size={18} />} on={payment === 'transfer'} onSelect={() => setPayment('transfer')} title="Virement bancaire" text="Votre place est réservée ; Eliane vous envoie les coordonnées bancaires." />}
-                      {offering.creditEligible && <PayOption icon={<Ticket size={18} />} on={payment === 'credit'} onSelect={() => setPayment('credit')} title="J’ai un carnet de séances" text="Une séance est déduite de votre carnet (même e-mail que l’achat)." />}
+                      <PayOption icon={<CreditCard size={18} />} on={payment === 'card'} onSelect={() => setPayment('card')} title={t.card} text={t.cardText} />
+                      {isTrip && <PayOption icon={<Landmark size={18} />} on={payment === 'transfer'} onSelect={() => setPayment('transfer')} title={t.transfer} text={t.transferText} />}
+                      {offering.creditEligible && <PayOption icon={<Ticket size={18} />} on={payment === 'credit'} onSelect={() => setPayment('credit')} title={t.credit} text={t.creditText} />}
                     </div>
                   </fieldset>
                 )}
@@ -395,11 +400,11 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
                   {offering.cancellationPolicy && <p className="text-xs">{offering.cancellationPolicy}</p>}
                   <label className="flex items-start gap-3">
                     <input type="checkbox" name="terms" required className="mt-1 accent-plum-800" />
-                    <span>J’accepte les <a href="/cgv" target="_blank" className="underline">conditions générales de vente</a> et la <a href="/confidentialite" target="_blank" className="underline">politique de confidentialité</a>. *</span>
+                    <span>{t.terms1} <a href="/cgv" target="_blank" className="underline">{t.terms2}</a> {t.terms3} <a href="/confidentialite" target="_blank" className="underline">{t.terms4}</a>. *</span>
                   </label>
                   <label className="flex items-start gap-3">
                     <input type="checkbox" name="newsletter" className="mt-1 accent-plum-800" />
-                    <span>Je souhaite recevoir la newsletter (désinscription possible à tout moment).</span>
+                    <span>{t.nlOptIn}</span>
                   </label>
                 </div>
               </div>
@@ -416,24 +421,24 @@ export function BookingWidget({ offering, occurrences = [] }: { offering: Widget
         <div className="mt-8 flex items-center justify-between gap-4">
           {step > 0 ? (
             <button type="button" onClick={() => setStep((s) => s - 1)} className="inline-flex items-center gap-2 text-sm font-semibold text-ink-soft hover:text-plum-800">
-              <ArrowLeft size={16} /> Retour
+              <ArrowLeft size={16} /> {t.back}
             </button>
           ) : (
             <span />
           )}
           <button
             type="submit"
-            disabled={!canNext || submitting || (stepName === 'Date' && !isSeance && occurrences.length === 0)}
+            disabled={!canNext || submitting || (stepName === 'date' && !isSeance && occurrences.length === 0)}
             className="inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-7 py-3.5 text-sm font-semibold text-sand-50 transition hover:bg-plum-700 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {submitting && <Loader2 size={16} className="animate-spin" />}
-            {stepName === 'Confirmation'
+            {stepName === 'confirm'
               ? free
-                ? 'Confirmer la réservation'
+                ? t.confirmBooking
                 : payment === 'card'
-                  ? `Payer ${xpf(deposit < total ? deposit : total)}`
-                  : 'Confirmer la réservation'
-              : 'Continuer'}
+                  ? t.pay(xpf(deposit < total ? deposit : total))
+                  : t.confirmBooking
+              : t.continue}
             {!submitting && <ArrowRight size={16} />}
           </button>
         </div>

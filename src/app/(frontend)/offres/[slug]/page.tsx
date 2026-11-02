@@ -12,14 +12,16 @@ import { Pill } from '@/components/site/ui'
 import { formatEUR } from '@/lib/money'
 import { img } from '@/lib/payload'
 import { offeringPhoto } from '@/lib/photos'
-import { durationLabel, getOffering, KIND_LABEL, listOfferings, MODE_LABEL, priceLabel, seatsLeft, upcomingOccurrences } from '@/lib/queries'
+import { getT } from '@/i18n/server'
+import { durationLabel, getOffering, kindLabel, listOfferings, modeLabel, priceLabel, seatsLeft, upcomingOccurrences } from '@/lib/queries'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 
 type P = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
-  const o = await getOffering((await params).slug)
+  const { lang } = await getT()
+  const o = await getOffering((await params).slug, lang)
   if (!o) return {}
   const og = img(o.seo?.image ?? o.image, 'card')
   return {
@@ -32,24 +34,25 @@ export async function generateMetadata({ params }: P): Promise<Metadata> {
 
 export default async function OfferingPage({ params }: P) {
   const { slug } = await params
-  const o = await getOffering(slug)
+  const { lang, t } = await getT()
+  const o = await getOffering(slug, lang)
   if (!o) notFound()
   if (o.kind === 'voyage') redirect(`/voyage-en-inde/${o.slug}`)
 
-  const [occ, others] = await Promise.all([o.kind !== 'seance' ? upcomingOccurrences(o.id) : Promise.resolve([]), listOfferings({ and: [{ kind: { not_equals: 'voyage' } }, { id: { not_equals: o.id } }] })])
+  const [occ, others] = await Promise.all([o.kind !== 'seance' ? upcomingOccurrences(o.id, lang) : Promise.resolve([]), listOfferings({ and: [{ kind: { not_equals: 'voyage' } }, { id: { not_equals: o.id } }] }, lang)])
   const hero = img(o.image, 'hero') ?? offeringPhoto(o.slug)
   const facts = [
     durationLabel(o.durationMinutes) && { icon: <Clock size={16} />, label: durationLabel(o.durationMinutes) },
-    o.mode && { icon: <MapPin size={16} />, label: o.location || MODE_LABEL[o.mode] },
-    (o.maxPerBooking ?? 1) > 1 && { icon: <Users size={16} />, label: `Jusqu’à ${o.maxPerBooking} personnes par réservation` },
+    o.mode && { icon: <MapPin size={16} />, label: o.location || modeLabel(o.mode, lang) },
+    (o.maxPerBooking ?? 1) > 1 && { icon: <Users size={16} />, label: t.offering.upTo(o.maxPerBooking ?? 1) },
   ].filter(Boolean) as { icon: React.ReactNode; label: string }[]
 
   return (
     <>
       <section className="pb-10 pt-[120px] lg:pt-[150px]">
         <div className="container-x">
-          <nav aria-label="Fil d’Ariane" className="text-sm text-ink-soft">
-            <Link href="/offres" className="hover:text-plum-800">Offres</Link> <span aria-hidden>/</span> <span>{o.title}</span>
+          <nav aria-label="Breadcrumb" className="text-sm text-ink-soft">
+            <Link href="/offres" className="hover:text-plum-800">{t.offering.breadcrumb}</Link> <span aria-hidden>/</span> <span>{o.title}</span>
           </nav>
         </div>
       </section>
@@ -59,8 +62,8 @@ export default async function OfferingPage({ params }: P) {
           <div>
             <Reveal>
               <div className="flex flex-wrap gap-2">
-                <Pill tone="plum">{KIND_LABEL[o.kind]}</Pill>
-                {o.mode && <Pill tone="sage">{MODE_LABEL[o.mode]}</Pill>}
+                <Pill tone="plum">{kindLabel(o.kind, lang)}</Pill>
+                {o.mode && <Pill tone="sage">{modeLabel(o.mode, lang)}</Pill>}
               </div>
               <h1 className="mt-6 text-[clamp(2.8rem,6vw,5rem)] leading-[0.98] text-plum-800">{o.title}</h1>
               {o.kicker && <p className="font-display mt-4 text-2xl italic text-saffron-600">{o.kicker}</p>}
@@ -90,22 +93,30 @@ export default async function OfferingPage({ params }: P) {
                   ))}
                 </ul>
               )}
+              {o.slug === 'meditation-son-primordial' && (
+                <div className="mt-12 border-l-2 border-saffron-500/60 pl-6">
+                  <h2 className="font-display text-3xl text-plum-800">{t.offering.meditationTitle}</h2>
+                  {t.offering.meditationText.map((p) => (
+                    <p key={p.slice(0, 24)} className="mt-4 leading-relaxed text-ink-soft">{p}</p>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
-          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start" aria-label="Réservation">
+          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start" aria-label={t.bw.book}>
             <div className="mb-5 flex items-end justify-between">
-              <p className="font-display text-4xl text-plum-800">{priceLabel(o)}</p>
-              {o.price ? <p className="text-sm text-ink-soft">{formatEUR(o.price)}{o.priceNote ? ` · ${o.priceNote}` : ''}</p> : null}
+              <p className="font-display text-4xl text-plum-800">{priceLabel(o, lang)}</p>
+              {o.price ? <p className="text-sm text-ink-soft">{formatEUR(o.price, lang)}{o.priceNote ? ` · ${o.priceNote}` : ''}</p> : null}
             </div>
             {o.bookingMode === 'request' ? (
               <div className="rounded-[3px] border border-plum-800/10 bg-sand-50 p-7">
-                <p className="font-display text-2xl text-plum-800">Organiser une conférence</p>
-                <p className="mb-6 mt-2 text-sm text-ink-soft">Indiquez la date souhaitée, le lieu et le nombre de participants.</p>
+                <p className="font-display text-2xl text-plum-800">{t.offering.confTitle}</p>
+                <p className="mb-6 mt-2 text-sm text-ink-soft">{t.offering.confText}</p>
                 <ContactForm offering={o.slug!} subject={o.title} />
               </div>
             ) : o.bookingMode === 'closed' ? (
-              <div className="rounded-[3px] bg-sand-50 p-7 text-ink-soft">Les réservations sont fermées pour le moment. <Link href="/contact" className="underline">Écrivez-moi</Link> pour être prévenu·e.</div>
+              <div className="rounded-[3px] bg-sand-50 p-7 text-ink-soft">{t.offering.closed} <Link href="/contact" className="underline">{t.offering.writeMe}</Link> {t.offering.toBeNotified}</div>
             ) : (
               <BookingWidget
                 offering={{
@@ -140,13 +151,13 @@ export default async function OfferingPage({ params }: P) {
       {others.length > 0 && (
         <section className="border-t border-plum-800/10 py-20">
           <div className="container-x">
-            <p className="eyebrow text-saffron-600">À découvrir aussi</p>
+            <p className="eyebrow text-saffron-600">{t.offering.alsoEyebrow}</p>
             <div className="mt-8 grid gap-6 md:grid-cols-3">
               {others.slice(0, 3).map((x) => (
                 <Link key={x.id} href={`/offres/${x.slug}`} className="group rounded-[3px] bg-sand-50 p-6 transition hover:bg-plum-800 hover:text-sand-50">
-                  <p className="text-xs uppercase tracking-[0.16em] text-saffron-600">{KIND_LABEL[x.kind]}</p>
+                  <p className="text-xs uppercase tracking-[0.16em] text-saffron-600">{kindLabel(x.kind, lang)}</p>
                   <p className="font-display mt-2 text-2xl text-plum-800 group-hover:text-sand-50">{x.title}</p>
-                  <p className="mt-2 text-sm text-ink-soft group-hover:text-sand-200">{priceLabel(x)}</p>
+                  <p className="mt-2 text-sm text-ink-soft group-hover:text-sand-200">{priceLabel(x, lang)}</p>
                 </Link>
               ))}
             </div>

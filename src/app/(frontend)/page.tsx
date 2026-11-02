@@ -12,20 +12,24 @@ import { PostCard, SectionHeading } from '@/components/site/ui'
 import { formatXPF } from '@/lib/money'
 import { img, payloadClient } from '@/lib/payload'
 import { offeringPhoto, photo, TRIP_GALLERY } from '@/lib/photos'
-import { home as homeDefaults } from '../../../scripts/seed-data'
-import { durationLabel, KIND_LABEL, listOfferings, listPosts, MODE_LABEL, postCardProps, priceLabel, seatsLeft, upcomingOccurrences } from '@/lib/queries'
+import { getT } from '@/i18n/server'
+import { durationLabel, kindLabel, listOfferings, listPosts, localeOpts, modeLabel, postCardProps, priceLabel, seatsLeft, upcomingOccurrences } from '@/lib/queries'
+
+import { home as homeFr, i18nEn } from '../../../scripts/seed-data'
 import type { Offering } from '@/payload-types'
 
-export const revalidate = 120
+export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const payload = await payloadClient()
+  const { lang, t } = await getT()
+  const homeDefaults = lang === 'en' ? i18nEn.home : homeFr
   const [home, offerings, posts, testimonials, occurrences] = await Promise.all([
-    payload.findGlobal({ slug: 'home', depth: 1 }),
-    listOfferings(),
-    listPosts(3),
-    payload.find({ collection: 'testimonials', where: { published: { equals: true } }, sort: 'order', limit: 12 }),
-    upcomingOccurrences(),
+    payload.findGlobal({ slug: 'home', depth: 1, ...localeOpts(lang) }),
+    listOfferings({}, lang),
+    listPosts(3, undefined, lang),
+    payload.find({ collection: 'testimonials', where: { published: { equals: true } }, sort: 'order', limit: 12, ...localeOpts(lang) }),
+    upcomingOccurrences(undefined, lang),
   ])
 
   const services = offerings.filter((o) => o.kind !== 'voyage')
@@ -48,11 +52,11 @@ export default async function HomePage() {
       />
 
       {/* Manifesto */}
-      <section className="py-28 lg:py-40" aria-label="Manifeste">
+      <section className="py-28 lg:py-40" aria-label={t.home.manifestoEyebrow}>
         <div className="container-x grid gap-12 lg:grid-cols-[0.3fr_1fr]">
           <Reveal>
-            <p className="eyebrow text-saffron-600">La vie est maintenant</p>
-            <p className="font-display mt-4 text-2xl italic text-sage-700">Comment veux-tu la vivre ?</p>
+            <p className="eyebrow text-saffron-600">{t.home.manifestoEyebrow}</p>
+            <p className="font-display mt-4 text-2xl italic text-sage-700">{t.home.manifestoQ}</p>
           </Reveal>
           <div>
             {(home.manifesto || homeDefaults.manifesto) && <ScrollWords text={home.manifesto || homeDefaults.manifesto} className="font-display text-[clamp(1.9rem,3.6vw,3.3rem)] leading-[1.22] text-plum-800" />}
@@ -80,12 +84,12 @@ export default async function HomePage() {
               </Parallax>
               <div className="absolute -bottom-8 right-6 rounded-[3px] bg-plum-800 px-7 py-6 text-sand-50 shadow-xl sm:right-[-2rem]">
                 <p className="font-display text-5xl leading-none text-saffron-300">20</p>
-                <p className="mt-1 max-w-[11rem] text-sm text-sand-200/85">minutes après le réveil qui changent toute la journée</p>
+                <p className="mt-1 max-w-[11rem] text-sm text-sand-200/85">{t.home.ritualBadge}</p>
               </div>
             </Reveal>
           )}
           <div>
-            <SectionHeading id="ritual-title" eyebrow="L’art de vivre ayurvédique" title={ritual.title} intro={ritual.text} />
+            <SectionHeading id="ritual-title" eyebrow={t.home.ritualEyebrow} title={ritual.title} intro={ritual.text} />
             <ol className="mt-12 grid grid-cols-2 gap-x-8 gap-y-2 sm:grid-cols-3">
               {pillars.map((p, i) => (
                 <Reveal as="li" key={('id' in p && p.id) || i} delay={i * 0.06} className="group border-t border-plum-800/12 py-5">
@@ -99,14 +103,30 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Ayurveda in brief: the three doshas */}
+      <section className="bg-sand-50 py-24 lg:py-32" aria-labelledby="dosha-title">
+        <div className="container-x">
+          <SectionHeading id="dosha-title" eyebrow={t.home.doshaEyebrow} title={t.home.doshaTitle} accent={t.home.doshaAccent} intro={t.home.doshaIntro} />
+          <ol className="mt-14 grid gap-px overflow-hidden border border-plum-800/10 bg-plum-800/10 md:grid-cols-3">
+            {t.home.doshas.map((d, i) => (
+              <Reveal as="li" key={d.name} delay={i * 0.08} className="bg-sand-50 p-8 lg:p-10">
+                <p className="eyebrow text-[0.66rem] text-sage-700">{d.el}</p>
+                <p className="font-display mt-3 text-5xl text-plum-800">{d.name}</p>
+                <p className="mt-4 leading-relaxed text-ink-soft">{d.text}</p>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
       {/* Offerings */}
       <section className="pb-28 lg:pb-36" aria-labelledby="offres-title">
         <div className="container-x">
           <div className="mb-14 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-            <SectionHeading id="offres-title" eyebrow="Accompagnements" title="Chaque chemin de retour à soi" accent="est unique." />
+            <SectionHeading id="offres-title" eyebrow={t.home.offersEyebrow} title={t.home.offersTitle} accent={t.home.offersAccent} />
             <Reveal>
               <Link href="/offres" className="text-sm font-semibold text-plum-800 underline decoration-saffron-500 underline-offset-[6px]">
-                Toutes les offres et les carnets
+                {t.home.offersAll}
               </Link>
             </Reveal>
           </div>
@@ -115,8 +135,8 @@ export default async function HomePage() {
               slug: o.slug!,
               title: o.title,
               kicker: o.kicker,
-              price: priceLabel(o),
-              meta: [KIND_LABEL[o.kind], MODE_LABEL[o.mode ?? ''], durationLabel(o.durationMinutes)].filter(Boolean).join(' · '),
+              price: priceLabel(o, lang),
+              meta: [kindLabel(o.kind, lang), modeLabel(o.mode, lang), durationLabel(o.durationMinutes)].filter(Boolean).join(' · '),
               image: img(o.image, 'card') ?? offeringPhoto(o.slug),
             }))}
           />
@@ -137,14 +157,36 @@ export default async function HomePage() {
         />
       )}
 
+      {/* Tahiti: where Eliane receives */}
+      <section className="relative overflow-hidden bg-plum-950 text-sand-50" aria-labelledby="tahiti-title">
+        <div className="absolute inset-0">
+          <Parallax className="h-full w-full" amount={60}>
+            <Image src="/images/photos/tahiti-vue-moorea.jpg" alt={lang === 'en' ? 'Moorea seen from the hills of Tahiti' : 'Vue de Moorea depuis les hauteurs de Tahiti'} fill sizes="100vw" className="object-cover opacity-55" />
+          </Parallax>
+        </div>
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-plum-950 via-plum-950/70 to-transparent" />
+        <div className="container-x relative grid gap-12 py-28 lg:grid-cols-[1fr_0.8fr] lg:py-40">
+          <Reveal>
+            <p className="eyebrow text-saffron-300">{t.home.tahitiEyebrow}</p>
+            <h2 id="tahiti-title" className="mt-5 max-w-2xl text-[clamp(2.4rem,5vw,4.4rem)] leading-[1]">
+              {t.home.tahitiTitle} <em className="text-saffron-300">{t.home.tahitiAccent}</em>
+            </h2>
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-sand-200/85">{t.home.tahitiText}</p>
+          </Reveal>
+          <Reveal delay={0.15} className="relative hidden aspect-[4/5] max-w-sm justify-self-end overflow-hidden rounded-[2px] lg:block">
+            <Image src="/images/photos/punaauia-plage.jpg" alt={lang === 'en' ? 'The Punaauia lagoon at sunset' : 'Le lagon de Punaauia au coucher du soleil'} fill sizes="30vw" className="object-cover" />
+          </Reveal>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="py-28 lg:py-36" aria-labelledby="temoignages-title">
         <div className="container-x grid gap-14 lg:grid-cols-[0.35fr_1fr]">
           <Reveal>
-            <p className="eyebrow text-saffron-600">Témoignages</p>
-            <h2 id="temoignages-title" className="mt-4 text-4xl text-plum-800">Ce qu’ils ont <em className="text-saffron-600">ressenti</em></h2>
+            <p className="eyebrow text-saffron-600">{t.home.testimonialsEyebrow}</p>
+            <h2 id="temoignages-title" className="mt-4 text-4xl text-plum-800">{t.home.testimonialsTitle} <em className="text-saffron-600">{t.home.testimonialsAccent}</em></h2>
           </Reveal>
-          <Testimonials items={testimonials.docs.map((t) => ({ id: t.id, quote: t.quote, highlight: t.highlight, name: t.name, context: t.context }))} />
+          <Testimonials items={testimonials.docs.map((x) => ({ id: x.id, quote: x.quote, highlight: x.highlight, name: x.name, context: x.context }))} />
         </div>
       </section>
 
@@ -153,13 +195,13 @@ export default async function HomePage() {
         <section className="bg-sand-50 py-28 lg:py-36" aria-labelledby="blog-title">
           <div className="container-x">
             <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
-              <SectionHeading id="blog-title" eyebrow="Le blog" title="Carnets d’Inde" accent="et sagesse du quotidien" />
-              <Link href="/blog" className="text-sm font-semibold text-plum-800 underline decoration-saffron-500 underline-offset-[6px]">Lire tous les articles</Link>
+              <SectionHeading id="blog-title" eyebrow={t.home.blogEyebrow} title={t.home.blogTitle} accent={t.home.blogAccent} />
+              <Link href="/blog" className="text-sm font-semibold text-plum-800 underline decoration-saffron-500 underline-offset-[6px]">{t.home.blogAll}</Link>
             </div>
             <div className="grid gap-10 lg:grid-cols-[1.25fr_1fr_1fr]">
               {posts.map((p, i) => (
                 <Reveal key={p.id} delay={i * 0.08}>
-                  <PostCard {...postCardProps(p)} large={i === 0} />
+                  <PostCard {...postCardProps(p)} lang={lang} large={i === 0} />
                 </Reveal>
               ))}
             </div>
@@ -171,13 +213,13 @@ export default async function HomePage() {
       <section className="relative overflow-hidden py-28 text-center lg:py-40">
         <div className="container-x relative">
           <Reveal>
-            <p className="eyebrow text-saffron-600">Tu es au bon endroit</p>
+            <p className="eyebrow text-saffron-600">{t.home.closingEyebrow}</p>
             <h2 className="mx-auto mt-6 max-w-4xl text-[clamp(2.6rem,6vw,5.2rem)] leading-[1] text-plum-800">
-              On ne peut pas toujours changer ce qui arrive. <em className="text-saffron-600">On peut changer la manière d’y répondre.</em>
+              {t.home.closing1} <em className="text-saffron-600">{t.home.closing2}</em>
             </h2>
             <div className="mt-12 flex flex-wrap justify-center gap-4">
-              <Link href="/offres/consultation-decouverte" className="rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">Réserver un premier échange</Link>
-              <Link href="/contact" className="rounded-[2px] border border-plum-800/25 px-8 py-4 font-semibold text-plum-800 transition hover:border-plum-800">Écrire à Eliane</Link>
+              <Link href="/offres/consultation-decouverte" className="rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">{t.home.closingBook}</Link>
+              <Link href="/contact" className="rounded-[2px] border border-plum-800/25 px-8 py-4 font-semibold text-plum-800 transition hover:border-plum-800">{t.home.closingWrite}</Link>
             </div>
           </Reveal>
         </div>

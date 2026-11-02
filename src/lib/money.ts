@@ -14,8 +14,8 @@ const nf = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 })
 
 export const formatXPF = (n?: number | null) => (n == null ? '' : `${nf.format(n)} XPF`)
 
-export const formatEUR = (xpf?: number | null) =>
-  xpf == null ? '' : `env. ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(xpf * EUR_PER_XPF)}`
+export const formatEUR = (xpf?: number | null, lang: 'fr' | 'en' = 'fr') =>
+  xpf == null ? '' : `${lang === 'en' ? 'approx.' : 'env.'} ${new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(xpf * EUR_PER_XPF)}`
 
 export const depositFor = (total: number, percent?: number | null) =>
   percent && percent > 0 && percent < 100 ? Math.round((total * percent) / 100) : total

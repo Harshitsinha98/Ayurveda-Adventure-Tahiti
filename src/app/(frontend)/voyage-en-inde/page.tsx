@@ -4,36 +4,41 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { Parallax, Reveal } from '@/components/motion/primitives'
-import { PageHero } from '@/components/site/ui'
+import { PageHero, SectionHeading } from '@/components/site/ui'
+import { Gallery } from '@/components/trip/TripParts'
+import { getT } from '@/i18n/server'
 import { formatXPF } from '@/lib/money'
 import { img } from '@/lib/payload'
-import { offeringPhoto } from '@/lib/photos'
+import { INDIA_PLACES, offeringPhoto, photo } from '@/lib/photos'
+import type { Img } from '@/lib/payload'
 import { listOfferings } from '@/lib/queries'
 
-export const revalidate = 120
-export const metadata: Metadata = {
-  title: 'Voyages spirituels en Inde',
-  description:
-    'Voyages en petit groupe avec Eliane et Sanjeev Mehta : Kumbha Mela, Rishikesh, Varanasi, Ladakh. Yoga, méditation, cercles sacrés et rencontres authentiques.',
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT()
+  return { title: t.trips.metaTitle, description: t.trips.metaDesc, alternates: { canonical: '/voyage-en-inde' } }
 }
 
 export default async function VoyagesPage() {
-  const trips = (await listOfferings({ kind: { equals: 'voyage' } })).sort(
+  const { lang, t: d } = await getT()
+  const places = INDIA_PLACES.map((n) => photo(n, undefined, lang)).filter(Boolean) as Img[]
+  const trips = (await listOfferings({ kind: { equals: 'voyage' } }, lang)).sort(
     (a, b) => Number(new Date(a.tripEnd || 0) < new Date()) - Number(new Date(b.tripEnd || 0) < new Date()),
   )
   return (
     <>
       <PageHero
         tone="plum"
-        eyebrow="Voyages en Inde"
-        title="Vivre l’Inde"
-        accent="autrement."
-        intro="Avec l’association Ayurveda Adventure Tahiti, je vous emmène en petit groupe dans les lieux qui m’ont transformée. Avec Sanjeev Mehta, guide de longue date, nous entrons dans une tradition vivante : yoga, méditation, cercles sacrés et rencontres."
+        eyebrow={d.trips.eyebrow}
+        title={d.trips.title}
+        accent={d.trips.accent}
+        intro={d.trips.intro}
       />
       <section className="py-20 lg:py-28">
         <div className="container-x space-y-24 lg:space-y-32">
           {trips.map((t, i) => {
-            const image = img(t.image, 'hero') ?? offeringPhoto(t.slug)
+            const image = img(t.image, 'hero') ?? offeringPhoto(t.slug, lang)
             const past = t.tripEnd ? new Date(t.tripEnd) < new Date() : false
             const [title, subtitle] = t.title.split(' · ')
             return (
@@ -46,7 +51,7 @@ export default async function VoyagesPage() {
                   </Link>
                 </Reveal>
                 <Reveal delay={0.1}>
-                  <p className="eyebrow text-saffron-600">{past ? 'Voyage passé' : 'Inscriptions ouvertes'} · {t.kicker}</p>
+                  <p className="eyebrow text-saffron-600">{past ? d.trips.past : d.trips.open} · {t.kicker}</p>
                   <h2 className="mt-5 text-[clamp(2.6rem,5vw,4.6rem)] leading-[0.95] text-plum-800">
                     {title}
                     {subtitle && <em className="mt-2 block text-[0.55em] text-saffron-600">{subtitle}</em>}
@@ -55,7 +60,7 @@ export default async function VoyagesPage() {
                   {t.tripRegion && <p className="mt-4 text-sm uppercase tracking-[0.16em] text-sage-700">{t.tripRegion}</p>}
                   <div className="mt-8 flex flex-wrap items-center gap-6">
                     <Link href={`/voyage-en-inde/${t.slug}`} className="group inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 transition hover:bg-plum-700">
-                      {past ? 'Revivre le voyage' : 'Programme et réservation'}
+                      {past ? d.trips.relive : d.trips.program}
                       <ArrowUpRight size={18} className="transition-transform duration-500 group-hover:rotate-45" />
                     </Link>
                     {t.price && <span className="font-display text-2xl text-plum-800">{formatXPF(t.price)}</span>}
@@ -66,6 +71,16 @@ export default async function VoyagesPage() {
           })}
         </div>
       </section>
+      {places.length > 0 && (
+        <section className="border-t border-plum-800/10 bg-sand-50 py-24 lg:py-32" aria-label={d.trips.placesEyebrow}>
+          <div className="container-x">
+            <SectionHeading eyebrow={d.trips.placesEyebrow} title={d.trips.placesTitle} accent={d.trips.placesAccent} />
+            <div className="mt-12">
+              <Gallery images={places} />
+            </div>
+          </div>
+        </section>
+      )}
     </>
   )
 }

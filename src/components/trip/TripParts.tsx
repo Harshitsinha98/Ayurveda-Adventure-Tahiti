@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { EASE } from '@/components/motion/primitives'
+import { useT } from '@/i18n/client'
 import type { Img } from '@/lib/payload'
 
 export function TripHero({ image, title, subtitle, kicker }: { image?: Img | null; title: string; subtitle?: string; kicker?: string | null }) {
@@ -51,6 +52,7 @@ export function Itinerary({ days }: { days: { day: string; title: string; text?:
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] })
   const h = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
   const [open, setOpen] = useState<number | null>(null)
+  const t = useT()
   return (
     <ol ref={ref} className="relative ml-3 border-l border-plum-800/12 pl-10">
       <motion.span aria-hidden style={{ height: h }} className="absolute -left-px top-0 w-px bg-saffron-500" />
@@ -75,7 +77,7 @@ export function Itinerary({ days }: { days: { day: string; title: string; text?:
                 <p className={`mt-2 max-w-2xl leading-relaxed text-ink-soft ${expanded ? '' : 'line-clamp-2'}`}>{d.text}</p>
                 {d.text.length > 140 && (
                   <button type="button" onClick={() => setOpen(expanded ? null : i)} className="mt-2 text-sm font-semibold text-plum-800 underline decoration-saffron-500 underline-offset-4" aria-expanded={expanded}>
-                    {expanded ? 'Réduire' : 'Lire la suite'}
+                    {expanded ? t.trip.readLess : t.trip.readMore}
                   </button>
                 )}
               </>
@@ -90,6 +92,7 @@ export function Itinerary({ days }: { days: { day: string; title: string; text?:
 /** Masonry gallery with an accessible lightbox. */
 export function Gallery({ images }: { images: Img[] }) {
   const [i, setI] = useState<number | null>(null)
+  const t = useT()
   const n = images.length
   const go = useCallback((d: number) => setI((v) => (v == null ? v : (v + d + n) % n)), [n])
   useEffect(() => {
@@ -120,7 +123,7 @@ export function Gallery({ images }: { images: Img[] }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-5%' }}
             transition={{ duration: 0.8, delay: (k % 3) * 0.08, ease: EASE }}
-            aria-label={`Agrandir : ${im.alt}`}
+            aria-label={`${t.trip.enlarge} : ${im.alt}`}
           >
             <Image src={im.url} alt={im.alt} width={im.width || 800} height={im.height || 600} sizes="(min-width:768px) 33vw, 50vw" className="h-auto w-full transition-transform duration-[1.2s] group-hover:scale-[1.05]" />
           </motion.button>
@@ -128,14 +131,14 @@ export function Gallery({ images }: { images: Img[] }) {
       </div>
       <AnimatePresence>
         {i != null && (
-          <motion.div role="dialog" aria-modal="true" aria-label="Galerie" className="fixed inset-0 z-[80] grid place-items-center bg-plum-950/92 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setI(null)}>
+          <motion.div role="dialog" aria-modal="true" aria-label={t.trip.gallery} className="fixed inset-0 z-[80] grid place-items-center bg-plum-950/92 p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setI(null)}>
             <motion.div key={i} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.4 }} className="relative h-[80vh] w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
               <Image src={images[i].url} alt={images[i].alt} fill sizes="100vw" className="object-contain" />
             </motion.div>
             <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-sm text-sand-200">{images[i].alt} · {i + 1}/{n}</p>
-            <button type="button" aria-label="Fermer" onClick={() => setI(null)} className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full bg-sand-50/10 text-sand-50"><X /></button>
-            <button type="button" aria-label="Photo précédente" onClick={(e) => { e.stopPropagation(); go(-1) }} className="absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-sand-50/10 text-sand-50"><ChevronLeft /></button>
-            <button type="button" aria-label="Photo suivante" onClick={(e) => { e.stopPropagation(); go(1) }} className="absolute right-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-sand-50/10 text-sand-50"><ChevronRight /></button>
+            <button type="button" aria-label={t.trip.close} onClick={() => setI(null)} className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-full bg-sand-50/10 text-sand-50"><X /></button>
+            <button type="button" aria-label={t.trip.prevPhoto} onClick={(e) => { e.stopPropagation(); go(-1) }} className="absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-sand-50/10 text-sand-50"><ChevronLeft /></button>
+            <button type="button" aria-label={t.trip.nextPhoto} onClick={(e) => { e.stopPropagation(); go(1) }} className="absolute right-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-sand-50/10 text-sand-50"><ChevronRight /></button>
           </motion.div>
         )}
       </AnimatePresence>

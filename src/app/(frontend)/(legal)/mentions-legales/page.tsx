@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { getSite } from '@/lib/payload'
 
 export const metadata: Metadata = { title: 'Mentions légales' }
-export const revalidate = 600
+export const dynamic = 'force-dynamic'
 
 export default async function MentionsPage() {
   const s = await getSite()

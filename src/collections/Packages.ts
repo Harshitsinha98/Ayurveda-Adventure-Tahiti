@@ -15,8 +15,8 @@ export const Packages: CollectionConfig = {
   defaultSort: 'order',
   access: { read: publicRead, create: staffOnly, update: staffOnly, delete: staffOnly },
   fields: [
-    { name: 'title', label: 'Nom', type: 'text', required: true },
-    { name: 'summary', label: 'Description', type: 'textarea' },
+    { name: 'title', localized: true, label: 'Nom', type: 'text', required: true },
+    { name: 'summary', localized: true, label: 'Description', type: 'textarea' },
     {
       type: 'row',
       fields: [

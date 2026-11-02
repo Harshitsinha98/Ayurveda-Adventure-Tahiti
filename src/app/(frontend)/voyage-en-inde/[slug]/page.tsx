@@ -11,40 +11,45 @@ import { Gallery, Itinerary, TripHero } from '@/components/trip/TripParts'
 import { formatEUR, formatXPF } from '@/lib/money'
 import { img, type Img } from '@/lib/payload'
 import { offeringPhoto, photo, TRIP_GALLERY } from '@/lib/photos'
+import { getT } from '@/i18n/server'
+import { dateLocale } from '@/i18n/dictionary'
 import { getOffering, seatsLeft, upcomingOccurrences } from '@/lib/queries'
 import { fmtDateOnly } from '@/lib/time'
 
-export const revalidate = 60
+export const dynamic = 'force-dynamic'
 type P = { params: Promise<{ slug: string }> }
 
 export async function generateMetadata({ params }: P): Promise<Metadata> {
-  const o = await getOffering((await params).slug)
+  const { lang } = await getT()
+  const o = await getOffering((await params).slug, lang)
   if (!o) return {}
   const og = img(o.seo?.image ?? o.image, 'card')
   return { title: o.seo?.title || o.title, description: o.seo?.description || o.summary, openGraph: og ? { images: [{ url: og.url }] } : undefined }
 }
 
 export default async function TripPage({ params }: P) {
-  const o = await getOffering((await params).slug)
+  const { lang, t } = await getT()
+  const dl = dateLocale(lang)
+  const o = await getOffering((await params).slug, lang)
   if (!o || o.kind !== 'voyage') notFound()
-  const occ = await upcomingOccurrences(o.id)
+  const occ = await upcomingOccurrences(o.id, lang)
   const [title, subtitle] = o.title.split(' · ')
   const days = o.tripStart && o.tripEnd ? differenceInCalendarDays(new Date(o.tripEnd), new Date(o.tripStart)) + 1 : null
   const nextOcc = occ[0]
   const past = o.tripEnd ? new Date(o.tripEnd) < new Date() : false
   const cmsGallery = (o.gallery ?? []).map((g) => img(g.image, 'card')).filter(Boolean) as Img[]
-  const gallery = cmsGallery.length ? cmsGallery : ((TRIP_GALLERY[o.slug!] ?? []).map((n) => photo(n)).filter(Boolean) as Img[])
+  const gallery = cmsGallery.length ? cmsGallery : ((TRIP_GALLERY[o.slug!] ?? []).map((n) => photo(n, undefined, lang)).filter(Boolean) as Img[])
 
   const facts = [
-    o.tripStart && { k: 'Dates', v: `${fmtDateOnly(o.tripStart)} – ${o.tripEnd ? fmtDateOnly(o.tripEnd) : ''}` },
-    days && { k: 'Durée', v: `${days} jours` },
-    nextOcc && { k: 'Groupe', v: `${nextOcc.capacity} personnes max. · ${seatsLeft(nextOcc)} places` },
-    o.price && { k: 'Prix', v: formatXPF(o.price) },
+    o.tripStart && { k: t.trip.dates, v: `${fmtDateOnly(o.tripStart, dl)} – ${o.tripEnd ? fmtDateOnly(o.tripEnd, dl) : ''}` },
+    days && { k: t.trip.duration, v: t.trip.days(days) },
+    nextOcc && { k: t.trip.group, v: t.trip.groupValue(nextOcc.capacity ?? 0, seatsLeft(nextOcc)) },
+    o.price && { k: t.trip.price, v: formatXPF(o.price) },
   ].filter(Boolean) as { k: string; v: string }[]
 
   return (
     <>
-      <TripHero image={img(o.image, 'hero') ?? offeringPhoto(o.slug)} title={title} subtitle={subtitle} kicker={o.kicker} />
+      <TripHero image={img(o.image, 'hero') ?? offeringPhoto(o.slug, lang)} title={title} subtitle={subtitle} kicker={o.kicker} />
 
       <section className="relative z-10 -mt-px bg-plum-950 pb-16 text-sand-50">
         <div className="container-x">
@@ -80,16 +85,16 @@ export default async function TripPage({ params }: P) {
               </ul>
             )}
           </div>
-          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start" id="reserver" aria-label="Réservation du voyage">
+          <aside className="min-w-0 lg:sticky lg:top-28 lg:self-start" id="reserver" aria-label={t.trip.reserve}>
             <div className="mb-5">
               <p className="font-display text-4xl text-plum-800">{o.price ? formatXPF(o.price) : ''}</p>
-              <p className="text-sm text-ink-soft">{o.price ? formatEUR(o.price) : ''}{o.priceNote ? ` · ${o.priceNote}` : ''}</p>
-              {o.depositPercent ? <p className="mt-2 text-sm text-sage-700">Acompte de {o.depositPercent} % à la réservation, solde {o.balanceDueDaysBefore ? `${o.balanceDueDaysBefore} jours avant le départ` : 'avant le départ'}.</p> : null}
+              <p className="text-sm text-ink-soft">{o.price ? formatEUR(o.price, lang) : ''}{o.priceNote ? ` · ${o.priceNote}` : ''}</p>
+              {o.depositPercent ? <p className="mt-2 text-sm text-sage-700">{t.trip.deposit(o.depositPercent, o.balanceDueDaysBefore)}</p> : null}
             </div>
             {o.bookingMode === 'closed' || past ? (
               <div className="rounded-[3px] bg-sand-50 p-7">
-                <p className="font-display text-2xl text-plum-800">{past ? 'Ce voyage a eu lieu.' : 'Inscriptions closes.'}</p>
-                <p className="mt-2 text-ink-soft">Inscrivez-vous à la newsletter pour connaître les prochains départs, ou écrivez à Eliane.</p>
+                <p className="font-display text-2xl text-plum-800">{past ? t.trip.pastTitle : t.trip.closedTitle}</p>
+                <p className="mt-2 text-ink-soft">{t.trip.closedText}</p>
               </div>
             ) : (
               <BookingWidget
@@ -116,7 +121,7 @@ export default async function TripPage({ params }: P) {
         <section className="bg-sand-50 py-24 lg:py-32" aria-labelledby="itin">
           <div className="container-x grid gap-16 lg:grid-cols-[0.6fr_1fr]">
             <div className="lg:sticky lg:top-28 lg:self-start">
-              <SectionHeading id="itin" eyebrow="Itinéraire à partir de Delhi" title="Jour" accent="après jour" intro="Un rythme pensé pour vivre chaque lieu de l’intérieur : pratiques le matin, rencontres et silence." />
+              <SectionHeading id="itin" eyebrow={t.trip.itinEyebrow} title={t.trip.itinTitle} accent={t.trip.itinAccent} intro={t.trip.itinIntro} />
             </div>
             <Itinerary days={o.itinerary!.map((d) => ({ day: d.day, title: d.title, text: d.text }))} />
           </div>
@@ -126,7 +131,7 @@ export default async function TripPage({ params }: P) {
       {gallery.length > 0 && (
         <section className="py-24 lg:py-32" aria-label="Photos">
           <div className="container-x">
-            <SectionHeading eyebrow="En images" title="L’Inde" accent="telle qu’on la vit" />
+            <SectionHeading eyebrow={t.trip.galleryEyebrow} title={t.trip.galleryTitle} accent={t.trip.galleryAccent} />
             <div className="mt-12">
               <Gallery images={gallery} />
             </div>
@@ -137,9 +142,9 @@ export default async function TripPage({ params }: P) {
       {o.presentationUrl && (
         <section className="pb-24">
           <div className="container-x">
-            <p className="eyebrow mb-6 text-saffron-600">Présentation interactive</p>
+            <p className="eyebrow mb-6 text-saffron-600">{t.trip.presentation}</p>
             <div className="relative aspect-video overflow-hidden rounded-[3px] bg-sand-200">
-              <iframe src={o.presentationUrl} title={`Présentation · ${o.title}`} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
+              <iframe src={o.presentationUrl} title={`${t.trip.presentation} · ${o.title}`} loading="lazy" allowFullScreen className="absolute inset-0 h-full w-full" />
             </div>
           </div>
         </section>
@@ -149,7 +154,7 @@ export default async function TripPage({ params }: P) {
         <div className="container-x grid gap-12 md:grid-cols-2">
           {(o.included?.length ?? 0) > 0 && (
             <div>
-              <h2 className="text-4xl">Le prix <em className="text-saffron-300">comprend</em></h2>
+              <h2 className="text-4xl">{t.trip.included[0]} <em className="text-saffron-300">{t.trip.included[1]}</em></h2>
               <ul className="mt-8 space-y-3">
                 {o.included!.map((x) => (
                   <li key={x.id} className="flex gap-3 text-sand-200/90"><Check size={18} className="mt-1 shrink-0 text-saffron-300" />{x.text}</li>
@@ -159,7 +164,7 @@ export default async function TripPage({ params }: P) {
           )}
           {(o.notIncluded?.length ?? 0) > 0 && (
             <div>
-              <h2 className="text-4xl">Le prix <em className="text-saffron-300">ne comprend pas</em></h2>
+              <h2 className="text-4xl">{t.trip.notIncluded[0]} <em className="text-saffron-300">{t.trip.notIncluded[1]}</em></h2>
               <ul className="mt-8 space-y-3">
                 {o.notIncluded!.map((x) => (
                   <li key={x.id} className="flex gap-3 text-sand-200/75"><Minus size={18} className="mt-1 shrink-0 text-sand-200/50" />{x.text}</li>

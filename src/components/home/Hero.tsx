@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRef } from 'react'
 
 import { EASE, MaskLines } from '@/components/motion/primitives'
+import { useT } from '@/i18n/client'
 import type { Img } from '@/lib/payload'
 
 export function Hero({
@@ -23,6 +24,7 @@ export function Hero({
   accent?: Img | null
 }) {
   const ref = useRef<HTMLElement>(null)
+  const t = useT().hero
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
   const imgY = useTransform(scrollYProgress, [0, 1], [0, 140])
   const imgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12])
@@ -66,12 +68,12 @@ export function Hero({
                 href="/offres/consultation-decouverte"
                 className="group inline-flex items-center gap-3 rounded-[2px] bg-plum-800 px-8 py-4 text-[0.95rem] font-semibold text-sand-50 shadow-[0_20px_40px_-18px_rgba(74,24,56,0.7)] transition hover:bg-plum-700"
               >
-                Un premier échange offert
+                {t.cta}
                 <ArrowRight size={16} strokeWidth={1.5} className="transition-transform duration-500 group-hover:translate-x-1" />
               </Link>
             <Link href="/voyage-en-inde" className="group inline-flex items-center gap-2 px-2 py-3 text-[0.95rem] font-semibold text-plum-800">
               <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat pb-0.5 transition-[background-size] duration-500 group-hover:bg-[length:100%_1px]">
-                Voyages spirituels en Inde
+                {t.trips}
               </span>
             </Link>
           </motion.div>
@@ -112,8 +114,8 @@ export function Hero({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 1.3, ease: EASE }}
           >
-            <p className="eyebrow text-[0.62rem] text-sage-700">À Punaauia & en ligne</p>
-            <p className="font-display mt-1 text-xl italic text-plum-800">La vie est maintenant</p>
+            <p className="eyebrow text-[0.62rem] text-sage-700">{t.badgeTop}</p>
+            <p className="font-display mt-1 text-xl italic text-plum-800">{t.badge}</p>
           </motion.div>
         </div>
       </div>
@@ -125,7 +127,7 @@ export function Hero({
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
       >
-        Défiler
+        {t.scroll}
         <motion.span className="block h-10 w-px origin-top bg-plum-800/40" animate={{ scaleY: [0, 1, 0], y: [0, 0, 20] }} transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }} />
       </motion.div>
     </section>

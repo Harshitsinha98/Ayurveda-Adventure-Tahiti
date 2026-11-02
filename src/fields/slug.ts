@@ -38,8 +38,8 @@ export const seoGroup: Field = {
   type: 'group',
   admin: { description: 'Facultatif. Sinon, le titre et le résumé sont utilisés.' },
   fields: [
-    { name: 'title', label: 'Titre pour Google', type: 'text', maxLength: 70 },
-    { name: 'description', label: 'Description pour Google', type: 'textarea', maxLength: 170 },
+    { name: 'title', localized: true, label: 'Titre pour Google', type: 'text', maxLength: 70 },
+    { name: 'description', localized: true, label: 'Description pour Google', type: 'textarea', maxLength: 170 },
     { name: 'image', label: 'Image de partage (réseaux sociaux)', type: 'upload', relationTo: 'media' },
   ],
 }

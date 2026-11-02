@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url'
 import config from '@payload-config'
 import { getPayload, type Payload } from 'payload'
 
-import { about, categories, home, offerings, packages, postSlugs, testimonials, trips } from './seed-data'
+import { about, categories, home, i18nEn, offerings, packages, postSlugs, testimonials, trips } from './seed-data'
 
 type Doc = Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -253,6 +253,75 @@ async function run() {
       categories: [catIds[meta.category]],
       _status: 'published',
     })
+  }
+
+  // ---------- English locale ----------
+  const EN = { locale: 'en' as const }
+  const homeFr = (await payload.findGlobal({ slug: 'home', depth: 0 })) as Doc
+  await payload.updateGlobal({
+    slug: 'home',
+    ...EN,
+    data: {
+      eyebrow: i18nEn.home.eyebrow,
+      headline: i18nEn.home.headline.map((line) => ({ line })),
+      intro: i18nEn.home.intro,
+      manifesto: i18nEn.home.manifesto,
+      manifestoAside: i18nEn.home.manifestoAside,
+      ritual: { ...i18nEn.home.ritual, image: homeFr.ritual?.image },
+      pillars: i18nEn.home.pillars,
+    } as never,
+  })
+  const aboutFr = (await payload.findGlobal({ slug: 'about', depth: 0 })) as Doc
+  await payload.updateGlobal({
+    slug: 'about',
+    ...EN,
+    data: {
+      lead: i18nEn.about.lead,
+      body: richText(i18nEn.about.paragraphs),
+      chapters: (aboutFr.chapters ?? []).map((c: Doc, i: number) => ({ ...c, ...i18nEn.about.chapters[i] })),
+      credentials: (aboutFr.credentials ?? []).map((c: Doc, i: number) => ({ ...c, title: i18nEn.about.credentials[i] ?? c.title })),
+    } as never,
+  })
+  for (const tt of i18nEn.testimonials) {
+    const r = await payload.find({ collection: 'testimonials', where: { name: { equals: tt.name } }, limit: 1 })
+    if (r.docs[0]) await payload.update({ collection: 'testimonials', id: r.docs[0].id, ...EN, data: tt as never })
+  }
+  for (const [slug, o] of Object.entries(i18nEn.offerings)) {
+    const id = offeringIds[slug]
+    if (!id) continue
+    const { body, ...rest } = o
+    await payload.update({ collection: 'offerings', id, ...EN, data: { ...rest, description: richText(body) } as never })
+  }
+  for (const [slug, o] of Object.entries(i18nEn.trips)) {
+    const id = offeringIds[slug]
+    if (!id) continue
+    const fr = (await payload.findByID({ collection: 'offerings', id, depth: 0 })) as Doc
+    const { body, itinerary, included, notIncluded, highlights, extras, ...rest } = o as Doc
+    await payload.update({
+      collection: 'offerings',
+      id,
+      ...EN,
+      data: {
+        ...rest,
+        description: richText(body ?? []),
+        itinerary: (itinerary as string[][]).map(([day, title, text]) => ({ day, title, text })),
+        included: (included as string[]).map((text) => ({ text })),
+        notIncluded: (notIncluded as string[]).map((text) => ({ text })),
+        highlights: (highlights as string[]).map((text) => ({ text })),
+        ...(extras ? { extras: (fr.extras ?? []).map((x: Doc, i: number) => ({ ...x, label: (extras as string[])[i] ?? x.label })) } : {}),
+      } as never,
+    })
+  }
+  for (const [slug, p] of Object.entries(i18nEn.packages)) {
+    const r = await payload.find({ collection: 'packages', where: { slug: { equals: slug } }, limit: 1 })
+    if (r.docs[0]) await payload.update({ collection: 'packages', id: r.docs[0].id, ...EN, data: p as never })
+  }
+  for (const [fr, enTitle] of Object.entries(i18nEn.categories)) {
+    if (catIds[fr]) await payload.update({ collection: 'categories', id: catIds[fr], ...EN, data: { title: enTitle } })
+  }
+  for (const [slug, p] of Object.entries(i18nEn.posts)) {
+    const r = await payload.find({ collection: 'posts', where: { slug: { equals: slug } }, limit: 1, draft: true })
+    if (r.docs[0]) await payload.update({ collection: 'posts', id: r.docs[0].id, ...EN, data: { ...p, content: (r.docs[0] as Doc).content, _status: 'published' } as never })
   }
 
   payload.logger.info('Seed terminé ✓')

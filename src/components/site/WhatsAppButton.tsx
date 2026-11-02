@@ -3,16 +3,19 @@
 import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 
+import { useT } from '@/i18n/client'
+
 export function WhatsAppButton({ number }: { number?: string | null }) {
   const path = usePathname()
+  const t = useT().wa
   if (!number) return null
-  const text = encodeURIComponent(`Namaste Eliane, je vous écris depuis le site (${path}).`)
+  const text = encodeURIComponent(`${t.text} (${path}).`)
   return (
     <motion.a
       href={`https://wa.me/${number.replace(/\D/g, '')}?text=${text}`}
       target="_blank"
       rel="noreferrer"
-      aria-label="Écrire à Eliane sur WhatsApp"
+      aria-label={t.label}
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay: 1.6, duration: 0.6 }}

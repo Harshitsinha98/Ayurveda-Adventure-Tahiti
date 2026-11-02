@@ -5,18 +5,22 @@ import Link from 'next/link'
 import { Parallax, Reveal } from '@/components/motion/primitives'
 import { RichText } from '@/components/site/RichText'
 import { img, payloadClient } from '@/lib/payload'
+import { getT } from '@/i18n/server'
 import { photo } from '@/lib/photos'
+import { localeOpts } from '@/lib/queries'
 
-export const revalidate = 300
-export const metadata: Metadata = {
-  title: 'À propos · Eliane Poeauru Koller Valadier',
-  description: 'Ethnologue, enseignante de méditation Primordial Sound et d’Ayurveda (Chopra Global), à Tahiti depuis 22 ans. Un pont entre les mondes.',
+export const dynamic = 'force-dynamic'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getT()
+  return { title: t.about.metaTitle, description: t.about.metaDesc, alternates: { canonical: '/a-propos' } }
 }
 
 export default async function AboutPage() {
+  const { lang, t } = await getT()
   const payload = await payloadClient()
-  const a = await payload.findGlobal({ slug: 'about', depth: 1 })
-  const portrait = img(a.portrait, 'hero') ?? photo('eliane-portrait')
+  const a = await payload.findGlobal({ slug: 'about', depth: 1, ...localeOpts(lang) })
+  const portrait = img(a.portrait, 'hero') ?? photo('eliane-portrait', undefined, lang)
 
   return (
     <>
@@ -27,11 +31,11 @@ export default async function AboutPage() {
               <div className="arch relative aspect-[4/5] overflow-hidden">
                 <Image src={portrait.url} alt={portrait.alt} fill priority sizes="(min-width:1024px) 40vw, 100vw" className="object-cover" />
               </div>
-              <p className="font-display absolute -bottom-6 left-6 bg-plum-900 px-6 py-3 text-xl italic text-saffron-300">À Tahiti depuis 22 ans</p>
+              <p className="font-display absolute -bottom-6 left-6 bg-plum-900 px-6 py-3 text-xl italic text-saffron-300">{t.about.badge}</p>
             </Reveal>
           )}
           <Reveal delay={0.1}>
-            <p className="eyebrow text-saffron-600">À propos</p>
+            <p className="eyebrow text-saffron-600">{t.about.eyebrow}</p>
             <h1 className="mt-5 text-[clamp(2.8rem,6vw,5.4rem)] leading-[0.95] text-plum-800">{a.title}</h1>
             {a.lead && <p className="font-display mt-6 text-[clamp(1.6rem,3vw,2.4rem)] italic leading-snug text-saffron-600">{a.lead}</p>}
           </Reveal>
@@ -48,9 +52,9 @@ export default async function AboutPage() {
       </section>
 
       {(a.chapters?.length ?? 0) > 0 && (
-        <section className="py-24 lg:py-32" aria-label="Parcours">
+        <section className="py-24 lg:py-32" aria-label={t.about.journey}>
           <div className="container-x">
-            <p className="eyebrow text-saffron-600">Un parcours</p>
+            <p className="eyebrow text-saffron-600">{t.about.journey}</p>
             <div className="mt-12 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
               {a.chapters!.map((c, i) => {
                 const im = img(c.image, 'card')
@@ -80,7 +84,7 @@ export default async function AboutPage() {
       {(a.credentials?.length ?? 0) > 0 && (
         <section className="bg-sand-50 py-20">
           <div className="container-x flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
-            <p className="font-display max-w-sm text-3xl text-plum-800">Formations et <em className="text-saffron-600">certifications</em></p>
+            <p className="font-display max-w-sm text-3xl text-plum-800">{t.about.credentials[0]} <em className="text-saffron-600">{t.about.credentials[1]}</em></p>
             <ul className="flex flex-wrap items-center gap-6">
               {a.credentials!.map((c) => {
                 const b = img(c.badge, 'thumb')
@@ -99,9 +103,9 @@ export default async function AboutPage() {
       <section className="py-24 text-center">
         <div className="container-x">
           <p className="font-display mx-auto max-w-3xl text-[clamp(2rem,4vw,3.4rem)] leading-tight text-plum-800">
-            Bienvenue dans cet espace où les traditions se rencontrent, <em className="text-saffron-600">où le corps est écouté.</em>
+            {t.about.closing1} <em className="text-saffron-600">{t.about.closing2}</em>
           </p>
-          <Link href="/offres/consultation-decouverte" className="mt-10 inline-block rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 hover:bg-plum-700">Faire connaissance</Link>
+          <Link href="/offres/consultation-decouverte" className="mt-10 inline-block rounded-[2px] bg-plum-800 px-8 py-4 font-semibold text-sand-50 hover:bg-plum-700">{t.about.cta}</Link>
         </div>
       </section>
     </>

@@ -120,7 +120,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('fr' | 'en') | ('fr' | 'en')[];
   globals: {
     'booking-settings': BookingSetting;
     home: Home;
@@ -133,7 +133,7 @@ export interface Config {
     about: AboutSelect<false> | AboutSelect<true>;
     site: SiteSelect<false> | SiteSelect<true>;
   };
-  locale: null;
+  locale: 'fr' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -718,6 +718,7 @@ export interface Export {
   page?: number | null;
   sort?: string | null;
   sortOrder?: ('asc' | 'desc') | null;
+  locale?: ('all' | 'fr' | 'en') | null;
   drafts?: ('yes' | 'no') | null;
   selectionToUse?: ('currentSelection' | 'currentFilters' | 'all') | null;
   fields?: string[] | null;
@@ -1407,6 +1408,7 @@ export interface ExportsSelect<T extends boolean = true> {
   page?: T;
   sort?: T;
   sortOrder?: T;
+  locale?: T;
   drafts?: T;
   selectionToUse?: T;
   fields?: T;

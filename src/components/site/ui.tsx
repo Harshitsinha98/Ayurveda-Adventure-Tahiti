@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { Reveal } from '@/components/motion/primitives'
+import { dateLocale, type Lang } from '@/i18n/dictionary'
 import type { Img } from '@/lib/payload'
 
 export function SectionHeading({
@@ -75,7 +76,9 @@ export function PostCard({
   date,
   category,
   large,
+  lang = 'fr',
 }: {
+  lang?: Lang
   href: string
   title: string
   excerpt?: string | null
@@ -93,7 +96,7 @@ export function PostCard({
         {category && <span className="absolute left-4 top-4 rounded-[2px] bg-sand-50/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-plum-800 backdrop-blur">{category}</span>}
       </div>
       <div className="mt-5">
-        {date && <p className="text-xs uppercase tracking-[0.16em] text-ink-soft">{new Date(date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
+        {date && <p className="text-xs uppercase tracking-[0.16em] text-ink-soft">{new Date(date).toLocaleDateString(dateLocale(lang), { day: 'numeric', month: 'long', year: 'numeric' })}</p>}
         <h3 className={`font-display mt-2 leading-tight text-plum-800 transition-colors group-hover:text-saffron-600 ${large ? 'text-[2.2rem]' : 'text-[1.6rem]'}`}>{title}</h3>
         {excerpt && <p className="mt-3 line-clamp-3 text-[0.97rem] leading-relaxed text-ink-soft">{excerpt}</p>}
       </div>

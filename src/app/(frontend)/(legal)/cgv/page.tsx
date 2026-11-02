@@ -5,7 +5,7 @@ import { getSite } from '@/lib/payload'
 import { LegalPage } from '../LegalPage'
 
 export const metadata: Metadata = { title: 'Conditions générales de vente' }
-export const revalidate = 600
+export const dynamic = 'force-dynamic'
 
 export default async function CgvPage() {
   const s = await getSite()

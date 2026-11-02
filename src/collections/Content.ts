@@ -8,7 +8,7 @@ export const Categories: CollectionConfig = {
   labels: { singular: 'Catégorie', plural: 'Catégories du blog' },
   admin: { group: 'Blog', useAsTitle: 'title' },
   access: { read: publicRead, create: staffOnly, update: staffOnly, delete: staffOnly },
-  fields: [{ name: 'title', label: 'Nom', type: 'text', required: true }, slugField()],
+  fields: [{ name: 'title', localized: true, label: 'Nom', type: 'text', required: true }, slugField()],
 }
 
 export const Posts: CollectionConfig = {
@@ -25,10 +25,10 @@ export const Posts: CollectionConfig = {
   versions: { drafts: { autosave: { interval: 2000 }, schedulePublish: true }, maxPerDoc: 30 },
   access: { read: publishedOrStaff, create: staffOnly, update: staffOnly, delete: staffOnly },
   fields: [
-    { name: 'title', label: 'Titre', type: 'text', required: true },
-    { name: 'excerpt', label: 'Résumé (affiché dans la liste)', type: 'textarea' },
+    { name: 'title', localized: true, label: 'Titre', type: 'text', required: true },
+    { name: 'excerpt', localized: true, label: 'Résumé (affiché dans la liste)', type: 'textarea' },
     { name: 'cover', label: 'Image de couverture', type: 'upload', relationTo: 'media' },
-    { name: 'content', label: 'Contenu', type: 'richText', required: true },
+    { name: 'content', localized: true, label: 'Contenu', type: 'richText', required: true },
     seoGroup,
     slugField(),
     {
@@ -72,10 +72,10 @@ export const Testimonials: CollectionConfig = {
   defaultSort: 'order',
   access: { read: publicRead, create: staffOnly, update: staffOnly, delete: staffOnly },
   fields: [
-    { name: 'quote', label: 'Témoignage', type: 'textarea', required: true },
-    { name: 'highlight', label: 'Phrase mise en avant', type: 'text', admin: { description: 'Courte citation en grand.' } },
+    { name: 'quote', localized: true, label: 'Témoignage', type: 'textarea', required: true },
+    { name: 'highlight', localized: true, label: 'Phrase mise en avant', type: 'text', admin: { description: 'Courte citation en grand.' } },
     { name: 'name', label: 'Prénom et initiale', type: 'text', required: true },
-    { name: 'context', label: 'Contexte', type: 'text', admin: { description: 'Ex. « Formation Ayurveda Santé »' } },
+    { name: 'context', localized: true, label: 'Contexte', type: 'text', admin: { description: 'Ex. « Formation Ayurveda Santé »' } },
     { name: 'published', label: 'Visible', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
     { name: 'order', label: 'Ordre', type: 'number', defaultValue: 10, admin: { position: 'sidebar' } },
   ],

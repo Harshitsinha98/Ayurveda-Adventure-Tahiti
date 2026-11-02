@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
 import { EASE } from '@/components/motion/primitives'
+import { useT } from '@/i18n/client'
 
 type T = { id: string | number; quote: string; highlight?: string | null; name: string; context?: string | null }
 
@@ -14,6 +15,7 @@ export function Testimonials({ items }: { items: T[] }) {
   const [paused, setPaused] = useState(false)
   const [dir, setDir] = useState(1)
   const n = items.length
+  const tt = useT().testimonials
 
   useEffect(() => {
     if (paused || n < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -39,7 +41,7 @@ export function Testimonials({ items }: { items: T[] }) {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
       aria-roledescription="carrousel"
-      aria-label="Témoignages"
+      aria-label={tt.label}
     >
       <div className="min-h-[340px] md:min-h-[300px]" aria-live="polite">
         <AnimatePresence mode="wait" custom={dir}>
@@ -50,7 +52,7 @@ export function Testimonials({ items }: { items: T[] }) {
             animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, x: -40 * dir, filter: 'blur(6px)' }}
             transition={{ duration: 0.7, ease: EASE }}
-            aria-label={`Témoignage ${i + 1} sur ${n}`}
+            aria-label={tt.of(i + 1, n)}
           >
             <blockquote>
               <p className="font-display text-[clamp(1.9rem,3.6vw,3.1rem)] leading-[1.15] text-plum-800">
@@ -72,13 +74,13 @@ export function Testimonials({ items }: { items: T[] }) {
       </div>
       {n > 1 && (
         <div className="mt-10 flex items-center gap-3">
-          <button type="button" onClick={() => go(-1)} aria-label="Témoignage précédent" className="grid h-12 w-12 place-items-center rounded-full border border-plum-800/20 text-plum-800 transition hover:bg-plum-800 hover:text-sand-50">
+          <button type="button" onClick={() => go(-1)} aria-label={tt.prev} className="grid h-12 w-12 place-items-center rounded-full border border-plum-800/20 text-plum-800 transition hover:bg-plum-800 hover:text-sand-50">
             <ChevronLeft size={18} />
           </button>
-          <button type="button" onClick={() => go(1)} aria-label="Témoignage suivant" className="grid h-12 w-12 place-items-center rounded-full border border-plum-800/20 text-plum-800 transition hover:bg-plum-800 hover:text-sand-50">
+          <button type="button" onClick={() => go(1)} aria-label={tt.next} className="grid h-12 w-12 place-items-center rounded-full border border-plum-800/20 text-plum-800 transition hover:bg-plum-800 hover:text-sand-50">
             <ChevronRight size={18} />
           </button>
-          <button type="button" onClick={() => setPaused((p) => !p)} aria-label={paused ? 'Reprendre le défilement' : 'Mettre en pause'} className="grid h-12 w-12 place-items-center rounded-full text-plum-800/70 transition hover:text-plum-800">
+          <button type="button" onClick={() => setPaused((p) => !p)} aria-label={paused ? tt.play : tt.pause} className="grid h-12 w-12 place-items-center rounded-full text-plum-800/70 transition hover:text-plum-800">
             {paused ? <Play size={16} /> : <Pause size={16} />}
           </button>
           <div className="ml-4 flex gap-2" aria-hidden>

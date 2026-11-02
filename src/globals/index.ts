@@ -48,21 +48,23 @@ export const HomePage: GlobalConfig = {
   admin: { group: 'Contenu' },
   access: { read: publicRead, update: staffOnly },
   fields: [
-    { name: 'eyebrow', label: 'Petite ligne au-dessus du titre', type: 'text', defaultValue: 'Ayurveda · Méditation · Yoga · Sciences védiques' },
+    { name: 'eyebrow', localized: true, label: 'Petite ligne au-dessus du titre', type: 'text', defaultValue: 'Ayurveda · Méditation · Yoga · Sciences védiques' },
     {
       name: 'headline',
+      localized: true,
       label: 'Titre (une ligne par phrase)',
       type: 'array',
       minRows: 1,
       maxRows: 4,
       fields: [{ name: 'line', type: 'text', required: true }],
     },
-    { name: 'intro', label: 'Texte d’introduction', type: 'textarea' },
+    { name: 'intro', localized: true, label: 'Texte d’introduction', type: 'textarea' },
     { name: 'heroImage', label: 'Photo principale', type: 'upload', relationTo: 'media' },
-    { name: 'manifesto', label: 'Grand texte « La vie est belle »', type: 'textarea' },
-    { name: 'manifestoAside', label: 'Phrase finale du grand texte', type: 'text' },
+    { name: 'manifesto', localized: true, label: 'Grand texte « La vie est belle »', type: 'textarea' },
+    { name: 'manifestoAside', localized: true, label: 'Phrase finale du grand texte', type: 'text' },
     {
       name: 'ritual',
+      localized: true,
       label: 'Bloc « Ta journée commence… »',
       type: 'group',
       fields: [
@@ -73,6 +75,7 @@ export const HomePage: GlobalConfig = {
     },
     {
       name: 'pillars',
+      localized: true,
       label: 'Les 6 piliers',
       type: 'array',
       maxRows: 6,
@@ -91,16 +94,16 @@ export const AboutPage: GlobalConfig = {
   access: { read: publicRead, update: staffOnly },
   fields: [
     { name: 'title', label: 'Nom affiché', type: 'text', defaultValue: 'Eliane Poeauru Koller Valadier' },
-    { name: 'lead', label: 'Phrase d’ouverture', type: 'text' },
+    { name: 'lead', localized: true, label: 'Phrase d’ouverture', type: 'text' },
     { name: 'portrait', label: 'Portrait', type: 'upload', relationTo: 'media' },
-    { name: 'body', label: 'Texte', type: 'richText' },
+    { name: 'body', localized: true, label: 'Texte', type: 'richText' },
     {
       name: 'chapters',
       label: 'Étapes du parcours',
       type: 'array',
       fields: [
-        { name: 'place', label: 'Lieu / période', type: 'text', required: true },
-        { name: 'text', type: 'textarea', required: true },
+        { name: 'place', localized: true, label: 'Lieu / période', type: 'text', required: true },
+        { name: 'text', localized: true, type: 'textarea', required: true },
         { name: 'image', type: 'upload', relationTo: 'media' },
       ],
     },
@@ -109,7 +112,7 @@ export const AboutPage: GlobalConfig = {
       label: 'Formations et certifications',
       type: 'array',
       fields: [
-        { name: 'title', type: 'text', required: true },
+        { name: 'title', localized: true, type: 'text', required: true },
         { name: 'badge', type: 'upload', relationTo: 'media' },
       ],
     },

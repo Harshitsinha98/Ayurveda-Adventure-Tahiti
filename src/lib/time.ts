@@ -13,8 +13,8 @@ export const tahitiWeekday = (d: Date) => toZonedTime(d, TZ).getDay() // 0 = Sun
 export const fmtTahiti = (d: Date | string, pattern = "EEEE d MMMM yyyy 'à' HH'h'mm") =>
   formatInTimeZone(new Date(d), TZ, pattern, { locale: undefined })
 
-export const fmtLong = (d: Date | string, tz = TZ) =>
-  new Date(d).toLocaleString('fr-FR', {
+export const fmtLong = (d: Date | string, tz = TZ, locale = 'fr-FR') =>
+  new Date(d).toLocaleString(locale, {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -28,8 +28,8 @@ export const fmtDay = (d: Date | string, tz = TZ) =>
   new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: tz })
 
 /** Calendar dates stored without a time (day pickers): format in UTC to avoid shifting the day. */
-export const fmtDateOnly = (d: Date | string) =>
-  new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
+export const fmtDateOnly = (d: Date | string, locale = 'fr-FR') =>
+  new Date(d).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
 export const fmtTime = (d: Date | string, tz = TZ) =>
   new Date(d).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: tz })
