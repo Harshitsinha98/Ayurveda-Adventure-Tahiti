@@ -3,6 +3,7 @@ import { APIError, type CollectionBeforeChangeHook, type CollectionConfig } from
 import { staffOnly } from '@/access'
 import { HOLDING, releaseSeats, reserveSeats } from '@/lib/booking/capacity'
 import { bookingEndpoints } from '@/endpoints/bookingAdmin'
+import { L } from '@/lib/admin-labels'
 
 const idOf = (v: unknown) => (v && typeof v === 'object' ? (v as { id: string | number }).id : (v as string | number))
 
@@ -81,14 +82,16 @@ const manageCapacity: CollectionBeforeChangeHook = async ({ data, originalDoc, r
 
 export const Bookings: CollectionConfig = {
   slug: 'bookings',
-  labels: { singular: 'Réservation', plural: 'Réservations' },
+  labels: { singular: L('Réservation', 'Booking'), plural: L('Réservations', 'Bookings') },
   admin: {
-    group: 'Réservations',
+    group: L('Réservations', 'Bookings'),
     useAsTitle: 'code',
     defaultColumns: ['code', 'customerName', 'offering', 'when', 'status', 'paymentStatus', 'amountTotal'],
     listSearchableFields: ['code', 'customerName', 'customerEmail'],
-    description:
+    description: L(
       'Toutes les réservations. Pour une réservation reçue par téléphone ou en personne : « Créer nouveau ».',
+      'All bookings. For a booking taken by phone or in person: use “Create new”.',
+    ),
     components: { beforeList: ['/components/admin/BookingsSummary#BookingsSummary'] },
   },
   defaultSort: '-createdAt',
@@ -100,15 +103,15 @@ export const Bookings: CollectionConfig = {
       type: 'tabs',
       tabs: [
         {
-          label: 'Réservation',
+          label: L('Réservation', 'Booking'),
           fields: [
             {
               type: 'row',
               fields: [
-                { name: 'offering', label: 'Offre', type: 'relationship', relationTo: 'offerings', required: true },
+                { name: 'offering', label: L('Offre', 'Offering'), type: 'relationship', relationTo: 'offerings', required: true },
                 {
                   name: 'occurrence',
-                  label: 'Date',
+                  label: L('Date', 'Date'),
                   type: 'relationship',
                   relationTo: 'occurrences',
                   filterOptions: ({ data }) =>
@@ -122,7 +125,7 @@ export const Bookings: CollectionConfig = {
               fields: [
                 {
                   name: 'slotStart',
-                  label: 'Rendez-vous : début',
+                  label: L('Rendez-vous : début', 'Appointment: start'),
                   type: 'date',
                   admin: {
                     date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm', displayFormat: 'd MMM yyyy HH:mm' },
@@ -131,7 +134,7 @@ export const Bookings: CollectionConfig = {
                 },
                 {
                   name: 'slotEnd',
-                  label: 'Rendez-vous : fin',
+                  label: L('Rendez-vous : fin', 'Appointment: end'),
                   type: 'date',
                   admin: {
                     date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm', displayFormat: 'd MMM yyyy HH:mm' },
@@ -145,106 +148,106 @@ export const Bookings: CollectionConfig = {
               fields: [
                 {
                   name: 'status',
-                  label: 'Statut',
+                  label: L('Statut', 'Status'),
                   type: 'select',
                   required: true,
                   defaultValue: 'confirmed',
                   options: [
-                    { label: 'En attente de paiement', value: 'pending' },
-                    { label: 'Confirmée', value: 'confirmed' },
-                    { label: 'Annulée', value: 'cancelled' },
-                    { label: 'Expirée (non payée)', value: 'expired' },
-                    { label: 'Terminée', value: 'completed' },
+                    { label: L('En attente de paiement', 'Awaiting payment'), value: 'pending' },
+                    { label: L('Confirmée', 'Confirmed'), value: 'confirmed' },
+                    { label: L('Annulée', 'Cancelled'), value: 'cancelled' },
+                    { label: L('Expirée (non payée)', 'Expired (unpaid)'), value: 'expired' },
+                    { label: L('Terminée', 'Completed'), value: 'completed' },
                   ],
                 },
-                { name: 'quantity', label: 'Participants', type: 'number', defaultValue: 1, min: 1, required: true },
+                { name: 'quantity', label: L('Participants', 'Participants'), type: 'number', defaultValue: 1, min: 1, required: true },
               ],
             },
             {
               name: 'participants',
-              label: 'Noms des participants',
+              label: L('Noms des participants', 'Participant names'),
               type: 'array',
               fields: [
                 {
                   type: 'row',
                   fields: [
-                    { name: 'name', label: 'Nom', type: 'text', required: true },
-                    { name: 'email', label: 'E-mail', type: 'email' },
+                    { name: 'name', label: L('Nom', 'Name'), type: 'text', required: true },
+                    { name: 'email', label: L('E-mail', 'Email'), type: 'email' },
                   ],
                 },
               ],
             },
             {
               name: 'source',
-              label: 'Origine',
+              label: L('Origine', 'Source'),
               type: 'select',
               defaultValue: 'manual',
               options: [
-                { label: 'Site internet', value: 'online' },
-                { label: 'Téléphone', value: 'phone' },
-                { label: 'E-mail', value: 'email' },
-                { label: 'En personne', value: 'in-person' },
-                { label: 'Saisie manuelle', value: 'manual' },
+                { label: L('Site internet', 'Website'), value: 'online' },
+                { label: L('Téléphone', 'Phone'), value: 'phone' },
+                { label: L('E-mail', 'Email'), value: 'email' },
+                { label: L('En personne', 'In person'), value: 'in-person' },
+                { label: L('Saisie manuelle', 'Manual entry'), value: 'manual' },
               ],
             },
-            { name: 'notes', label: 'Notes', type: 'textarea' },
-            { name: 'customerMessage', label: 'Message du client', type: 'textarea', admin: { readOnly: true } },
+            { name: 'notes', label: L('Notes', 'Notes'), type: 'textarea' },
+            { name: 'customerMessage', label: L('Message du client', 'Customer message'), type: 'textarea', admin: { readOnly: true } },
           ],
         },
         {
-          label: 'Client',
+          label: L('Client', 'Customer'),
           fields: [
-            { name: 'customer', label: 'Fiche client', type: 'relationship', relationTo: 'customers', required: true },
+            { name: 'customer', label: L('Fiche client', 'Customer record'), type: 'relationship', relationTo: 'customers', required: true },
             {
               type: 'row',
               fields: [
-                { name: 'customerName', label: 'Nom', type: 'text' },
-                { name: 'customerEmail', label: 'E-mail', type: 'email' },
-                { name: 'customerPhone', label: 'Téléphone', type: 'text' },
+                { name: 'customerName', label: L('Nom', 'Name'), type: 'text' },
+                { name: 'customerEmail', label: L('E-mail', 'Email'), type: 'email' },
+                { name: 'customerPhone', label: L('Téléphone', 'Phone'), type: 'text' },
               ],
             },
             {
               name: 'timezone',
-              label: 'Fuseau horaire du client',
+              label: L('Fuseau horaire du client', 'Customer time zone'),
               type: 'text',
-              admin: { readOnly: true, description: 'Utilisé pour afficher l’heure locale dans les e-mails.' },
+              admin: { readOnly: true, description: L('Utilisé pour afficher l’heure locale dans les e-mails.', 'Used to display the local time in emails.') },
             },
           ],
         },
         {
-          label: 'Paiement',
+          label: L('Paiement', 'Payment'),
           fields: [
             {
               type: 'row',
               fields: [
-                { name: 'amountTotal', label: 'Montant total (XPF)', type: 'number', required: true, min: 0, defaultValue: 0 },
-                { name: 'amountDueNow', label: 'À payer à la réservation (XPF)', type: 'number', min: 0 },
-                { name: 'balanceDueDate', label: 'Solde à régler avant le', type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
+                { name: 'amountTotal', label: L('Montant total (XPF)', 'Total amount (XPF)'), type: 'number', required: true, min: 0, defaultValue: 0 },
+                { name: 'amountDueNow', label: L('À payer à la réservation (XPF)', 'Due at booking (XPF)'), type: 'number', min: 0 },
+                { name: 'balanceDueDate', label: L('Solde à régler avant le', 'Balance due by'), type: 'date', admin: { date: { pickerAppearance: 'dayOnly' } } },
               ],
             },
             {
               type: 'row',
               fields: [
-                { name: 'amountPaid', label: 'Déjà payé (XPF)', type: 'number', admin: { readOnly: true } },
-                { name: 'balance', label: 'Reste à payer (XPF)', type: 'number', admin: { readOnly: true } },
+                { name: 'amountPaid', label: L('Déjà payé (XPF)', 'Already paid (XPF)'), type: 'number', admin: { readOnly: true } },
+                { name: 'balance', label: L('Reste à payer (XPF)', 'Balance due (XPF)'), type: 'number', admin: { readOnly: true } },
                 {
                   name: 'paymentStatus',
-                  label: 'Paiement',
+                  label: L('Paiement', 'Payment'),
                   type: 'select',
                   admin: { readOnly: true },
                   options: [
-                    { label: 'Non payé', value: 'unpaid' },
-                    { label: 'Partiellement payé', value: 'partial' },
-                    { label: 'Payé', value: 'paid' },
-                    { label: 'Remboursé', value: 'refunded' },
-                    { label: 'Gratuit', value: 'free' },
+                    { label: L('Non payé', 'Unpaid'), value: 'unpaid' },
+                    { label: L('Partiellement payé', 'Partially paid'), value: 'partial' },
+                    { label: L('Payé', 'Paid'), value: 'paid' },
+                    { label: L('Remboursé', 'Refunded'), value: 'refunded' },
+                    { label: L('Gratuit', 'Free'), value: 'free' },
                   ],
                 },
               ],
             },
             {
               name: 'lines',
-              label: 'Détail',
+              label: L('Détail', 'Breakdown'),
               type: 'array',
               admin: { readOnly: true },
               fields: [
@@ -260,11 +263,13 @@ export const Bookings: CollectionConfig = {
             },
             {
               name: 'payments',
-              label: 'Paiements et remboursements',
+              label: L('Paiements et remboursements', 'Payments and refunds'),
               type: 'array',
               admin: {
-                description:
+                description: L(
                   'Les paiements en ligne s’ajoutent automatiquement. Ajoutez ici un paiement en espèces, virement ou carte sur place.',
+                  'Online payments are added automatically. Add a cash, bank transfer or on-site card payment here.',
+                ),
               },
               fields: [
                 {
@@ -272,33 +277,33 @@ export const Bookings: CollectionConfig = {
                   fields: [
                     {
                       name: 'kind',
-                      label: 'Type',
+                      label: L('Type', 'Type'),
                       type: 'select',
                       defaultValue: 'payment',
                       options: [
-                        { label: 'Paiement', value: 'payment' },
-                        { label: 'Remboursement', value: 'refund' },
+                        { label: L('Paiement', 'Payment'), value: 'payment' },
+                        { label: L('Remboursement', 'Refund'), value: 'refund' },
                       ],
                     },
-                    { name: 'amount', label: 'Montant (XPF)', type: 'number', required: true, min: 0 },
+                    { name: 'amount', label: L('Montant (XPF)', 'Amount (XPF)'), type: 'number', required: true, min: 0 },
                     {
                       name: 'method',
-                      label: 'Moyen',
+                      label: L('Moyen', 'Method'),
                       type: 'select',
                       defaultValue: 'cash',
                       options: [
-                        { label: 'Carte en ligne (Mobupay)', value: 'online' },
-                        { label: 'Espèces', value: 'cash' },
-                        { label: 'Virement', value: 'transfer' },
-                        { label: 'Carte sur place', value: 'card' },
-                        { label: 'Carnet de séances', value: 'credit' },
-                        { label: 'Autre', value: 'other' },
+                        { label: L('Carte en ligne (Mobupay)', 'Online card (Mobupay)'), value: 'online' },
+                        { label: L('Espèces', 'Cash'), value: 'cash' },
+                        { label: L('Virement', 'Bank transfer'), value: 'transfer' },
+                        { label: L('Carte sur place', 'On-site card'), value: 'card' },
+                        { label: L('Carnet de séances', 'Session package'), value: 'credit' },
+                        { label: L('Autre', 'Other'), value: 'other' },
                       ],
                     },
-                    { name: 'date', label: 'Date', type: 'date', defaultValue: () => new Date().toISOString() },
+                    { name: 'date', label: L('Date', 'Date'), type: 'date', defaultValue: () => new Date().toISOString() },
                   ],
                 },
-                { name: 'providerRef', label: 'Référence', type: 'text', admin: { readOnly: true } },
+                { name: 'providerRef', label: L('Référence', 'Reference'), type: 'text', admin: { readOnly: true } },
               ],
             },
             {
@@ -309,7 +314,7 @@ export const Bookings: CollectionConfig = {
           ],
         },
         {
-          label: 'Technique',
+          label: L('Technique', 'Technical'),
           admin: { condition: (_d, _s, { user }) => (user as { role?: string })?.role === 'admin' },
           fields: [
             { name: 'mobupayPaymentId', type: 'text', index: true, admin: { readOnly: true } },
@@ -328,7 +333,7 @@ export const Bookings: CollectionConfig = {
     },
     {
       name: 'code',
-      label: 'Numéro',
+      label: L('Numéro', 'Reference'),
       type: 'text',
       unique: true,
       index: true,
@@ -336,7 +341,7 @@ export const Bookings: CollectionConfig = {
     },
     {
       name: 'when',
-      label: 'Date',
+      label: L('Date', 'Date'),
       type: 'text',
       admin: { position: 'sidebar', readOnly: true },
       hooks: {

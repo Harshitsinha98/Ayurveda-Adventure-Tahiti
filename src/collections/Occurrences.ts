@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { publicRead, staffOnly } from '@/access'
+import { L } from '@/lib/admin-labels'
 
 /**
  * Dated occurrences: a course start, a workshop, a conference or a journey departure.
@@ -9,19 +10,22 @@ import { publicRead, staffOnly } from '@/access'
  */
 export const Occurrences: CollectionConfig = {
   slug: 'occurrences',
-  labels: { singular: 'Date / session', plural: 'Dates et sessions' },
+  labels: { singular: L('Date / session', 'Date / session'), plural: L('Dates et sessions', 'Dates & sessions') },
   admin: {
-    group: 'Réservations',
+    group: L('Réservations', 'Bookings'),
     useAsTitle: 'label',
     defaultColumns: ['label', 'offering', 'startsAt', 'capacity', 'seatsReserved', 'status'],
-    description: 'Créer, modifier, dupliquer ou annuler une date. « Dupliquer » se trouve dans le menu ⋯ de la fiche.',
+    description: L(
+      'Créer, modifier, dupliquer ou annuler une date. « Dupliquer » se trouve dans le menu ⋯ de la fiche.',
+      'Create, edit, duplicate or cancel a date. “Duplicate” is in the ⋯ menu of the record.',
+    ),
   },
   defaultSort: 'startsAt',
   access: { read: publicRead, create: staffOnly, update: staffOnly, delete: staffOnly },
   fields: [
     {
       name: 'offering',
-      label: 'Offre',
+      label: L('Offre', 'Offering'),
       type: 'relationship',
       relationTo: 'offerings',
       required: true,
@@ -32,14 +36,14 @@ export const Occurrences: CollectionConfig = {
       fields: [
         {
           name: 'startsAt',
-          label: 'Début',
+          label: L('Début', 'Start'),
           type: 'date',
           required: true,
           admin: { date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm', displayFormat: 'd MMM yyyy HH:mm' } },
         },
         {
           name: 'endsAt',
-          label: 'Fin',
+          label: L('Fin', 'End'),
           type: 'date',
           admin: { date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm', displayFormat: 'd MMM yyyy HH:mm' } },
         },
@@ -47,15 +51,15 @@ export const Occurrences: CollectionConfig = {
     },
     {
       name: 'schedule',
-      label: 'Séances de la formation',
+      label: L('Séances de la formation', 'Course sessions'),
       type: 'array',
-      admin: { description: 'Facultatif : liste des dates si la formation se déroule sur plusieurs jours.' },
+      admin: { description: L('Facultatif : liste des dates si la formation se déroule sur plusieurs jours.', 'Optional: list of dates if the course runs over several days.') },
       fields: [
         {
           type: 'row',
           fields: [
-            { name: 'startsAt', label: 'Début', type: 'date', required: true, admin: { date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm' } } },
-            { name: 'endsAt', label: 'Fin', type: 'date', admin: { date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm' } } },
+            { name: 'startsAt', label: L('Début', 'Start'), type: 'date', required: true, admin: { date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm' } } },
+            { name: 'endsAt', label: L('Fin', 'End'), type: 'date', admin: { date: { pickerAppearance: 'dayAndTime', timeFormat: 'HH:mm' } } },
           ],
         },
       ],
@@ -63,34 +67,34 @@ export const Occurrences: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'capacity', label: 'Places au total', type: 'number', required: true, min: 1, defaultValue: 12 },
+        { name: 'capacity', label: L('Places au total', 'Total seats'), type: 'number', required: true, min: 1, defaultValue: 12 },
         {
           name: 'seatsReserved',
-          label: 'Places réservées',
+          label: L('Places réservées', 'Seats reserved'),
           type: 'number',
           defaultValue: 0,
           min: 0,
-          admin: { readOnly: true, description: 'Calculé automatiquement.' },
+          admin: { readOnly: true, description: L('Calculé automatiquement.', 'Calculated automatically.') },
           hooks: { beforeDuplicate: [() => 0] },
         },
       ],
     },
-    { name: 'location', label: 'Lieu (si différent de l’offre)', type: 'text' },
-    { name: 'priceOverride', label: 'Prix spécial pour cette date (XPF)', type: 'number', min: 0 },
+    { name: 'location', label: L('Lieu (si différent de l’offre)', 'Location (if different from the offering)'), type: 'text' },
+    { name: 'priceOverride', label: L('Prix spécial pour cette date (XPF)', 'Special price for this date (XPF)'), type: 'number', min: 0 },
     {
       name: 'status',
-      label: 'Statut',
+      label: L('Statut', 'Status'),
       type: 'select',
       defaultValue: 'open',
       required: true,
       hooks: { beforeDuplicate: [() => 'open'] },
       options: [
-        { label: 'Inscriptions ouvertes', value: 'open' },
-        { label: 'Complet / inscriptions closes', value: 'closed' },
-        { label: 'Annulée', value: 'cancelled' },
+        { label: L('Inscriptions ouvertes', 'Registration open'), value: 'open' },
+        { label: L('Complet / inscriptions closes', 'Full / registration closed'), value: 'closed' },
+        { label: L('Annulée', 'Cancelled'), value: 'cancelled' },
       ],
     },
-    { name: 'notes', label: 'Note interne', type: 'textarea' },
+    { name: 'notes', label: L('Note interne', 'Internal note'), type: 'textarea' },
     {
       name: 'label',
       type: 'text',

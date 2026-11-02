@@ -1,13 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
 import { adminFieldOnly, adminOnly, hiddenForEditors, isAdmin, isStaff } from '@/access'
+import { L } from '@/lib/admin-labels'
 
 export const Users: CollectionConfig = {
   slug: 'users',
-  labels: { singular: 'Utilisateur', plural: 'Utilisateurs' },
+  labels: { singular: L('Utilisateur', 'User'), plural: L('Utilisateurs', 'Users') },
   admin: {
     useAsTitle: 'email',
-    group: 'Administration',
+    group: L('Administration', 'Administration'),
     hidden: hiddenForEditors,
     defaultColumns: ['name', 'email', 'role'],
   },
@@ -20,18 +21,18 @@ export const Users: CollectionConfig = {
     admin: ({ req }) => isStaff(req.user as never),
   },
   fields: [
-    { name: 'name', label: 'Nom', type: 'text' },
+    { name: 'name', label: L('Nom', 'Name'), type: 'text' },
     {
       name: 'role',
-      label: 'Rôle',
+      label: L('Rôle', 'Role'),
       type: 'select',
       required: true,
       defaultValue: 'editeur',
       saveToJWT: true,
       access: { update: adminFieldOnly, create: adminFieldOnly },
       options: [
-        { label: 'Administrateur (technique)', value: 'admin' },
-        { label: 'Éditrice (gestion du site)', value: 'editeur' },
+        { label: L('Administrateur (technique)', 'Administrator (technical)'), value: 'admin' },
+        { label: L('Éditrice (gestion du site)', 'Editor (site management)'), value: 'editeur' },
       ],
     },
   ],

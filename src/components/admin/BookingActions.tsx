@@ -1,20 +1,17 @@
 'use client'
 
-import { useDocumentInfo } from '@payloadcms/ui'
+import { useDocumentInfo, useTranslation } from '@payloadcms/ui'
 import { useState } from 'react'
 
-const btn: React.CSSProperties = {
-  padding: '9px 16px',
-  borderRadius: 999,
-  border: '1px solid var(--theme-elevation-200)',
-  background: 'var(--theme-elevation-0)',
-  cursor: 'pointer',
-  fontSize: 13,
-}
+import { tr, type Bilingual } from '@/lib/admin-labels'
 
-/** Buttons in the "Paiement" tab: resend confirmation, balance link, cancel and refund. */
+/** Buttons in the "Paiement" tab: resend confirmation, balance link, cancel and refund. Bilingual (FR/EN). */
 export function BookingActions() {
   const { id } = useDocumentInfo()
+  const { i18n } = useTranslation()
+  const lang = i18n?.language ?? 'fr'
+  const t = (pair: Bilingual) => tr(lang, pair)
+
   const [busy, setBusy] = useState<string | null>(null)
   const [msg, setMsg] = useState<string | null>(null)
 
@@ -32,13 +29,17 @@ export function BookingActions() {
         body: '{}',
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erreur')
+      if (!res.ok) throw new Error(data.error || t({ fr: 'Erreur', en: 'Error' }))
       setMsg(
         action === 'refund'
-          ? `Réservation annulée.${data.refunded ? ` Remboursement lancé : ${data.refunded} XPF.` : ''} Rechargez la page.`
+          ? `${t({ fr: 'Réservation annulée.', en: 'Booking cancelled.' })}${
+              data.refunded
+                ? ` ${t({ fr: 'Remboursement lancé', en: 'Refund started' })} : ${data.refunded} XPF.`
+                : ''
+            } ${t({ fr: 'Rechargez la page.', en: 'Reload the page.' })}`
           : action === 'balance-link'
-            ? 'Lien de paiement du solde envoyé au client.'
-            : 'E-mail de confirmation renvoyé.',
+            ? t({ fr: 'Lien de paiement du solde envoyé au client.', en: 'Balance payment link sent to the client.' })
+            : t({ fr: 'E-mail de confirmation renvoyé.', en: 'Confirmation email resent.' }),
       )
     } catch (e) {
       setMsg(`⚠ ${(e as Error).message}`)
@@ -48,32 +49,38 @@ export function BookingActions() {
   }
 
   return (
-    <div style={{ margin: '24px 0', padding: 18, borderRadius: 14, background: 'var(--theme-elevation-50)' }}>
-      <div style={{ fontWeight: 600, marginBottom: 10 }}>Actions</div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-        <button type="button" style={btn} disabled={!!busy} onClick={() => run('resend')}>
-          {busy === 'resend' ? '…' : 'Renvoyer la confirmation'}
+    <div className="at-booking-actions">
+      <div className="at-booking-actions__title">{t({ fr: 'Actions', en: 'Actions' })}</div>
+      <div className="at-booking-actions__row">
+        <button type="button" className="at-btn" disabled={!!busy} onClick={() => run('resend')}>
+          {busy === 'resend' ? '…' : t({ fr: 'Renvoyer la confirmation', en: 'Resend confirmation' })}
         </button>
-        <button type="button" style={btn} disabled={!!busy} onClick={() => run('balance-link')}>
-          {busy === 'balance-link' ? '…' : 'Envoyer le lien de paiement du solde'}
+        <button type="button" className="at-btn" disabled={!!busy} onClick={() => run('balance-link')}>
+          {busy === 'balance-link' ? '…' : t({ fr: 'Envoyer le lien de paiement du solde', en: 'Send balance payment link' })}
         </button>
         <button
           type="button"
-          style={{ ...btn, borderColor: '#b54848', color: '#b54848' }}
+          className="at-btn at-btn--danger"
           disabled={!!busy}
           onClick={() =>
             run(
               'refund',
-              'Annuler cette réservation ? Les paiements par carte en ligne seront remboursés intégralement et le client recevra un e-mail.',
+              t({
+                fr: 'Annuler cette réservation ? Les paiements par carte en ligne seront remboursés intégralement et le client recevra un e-mail.',
+                en: 'Cancel this booking? Online card payments will be fully refunded and the client will receive an email.',
+              }),
             )
           }
         >
-          {busy === 'refund' ? '…' : 'Annuler et rembourser'}
+          {busy === 'refund' ? '…' : t({ fr: 'Annuler et rembourser', en: 'Cancel and refund' })}
         </button>
       </div>
-      {msg && <p style={{ marginTop: 12, fontSize: 13 }}>{msg}</p>}
-      <p style={{ marginTop: 12, fontSize: 12, opacity: 0.65 }}>
-        Un remboursement partiel se fait aussi depuis votre espace Mobupay ; il s’ajoute ici automatiquement.
+      {msg && <p className="at-booking-actions__msg">{msg}</p>}
+      <p className="at-booking-actions__note">
+        {t({
+          fr: 'Un remboursement partiel se fait aussi depuis votre espace Mobupay ; il s’ajoute ici automatiquement.',
+          en: 'A partial refund can also be done from your Mobupay area; it is added here automatically.',
+        })}
       </p>
     </div>
   )
