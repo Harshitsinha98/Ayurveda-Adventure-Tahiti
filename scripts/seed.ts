@@ -2,6 +2,7 @@
  * Seeds the database with the content migrated from the Wix site.
  * Usage: npm run seed   (safe to run again: existing slugs are skipped)
  * Creates an admin user from SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD if set.
+ * SEED_SKIP_MEDIA=1 skips image uploads (when the target has no Vercel Blob storage).
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -57,7 +58,10 @@ function postToLexical(paras: string[]) {
 
 // ---------- Media ----------
 const mediaCache = new Map<string, number | string>()
+const SKIP_MEDIA = process.env.SEED_SKIP_MEDIA === '1'
 async function media(payload: Payload, name: string, alt: string) {
+  // Production without Vercel Blob: keep CMS images empty so the site uses its bundled photos.
+  if (SKIP_MEDIA) return undefined
   if (mediaCache.has(name)) return mediaCache.get(name)!
   const filename = `${name}.jpg`
   const existing = await payload.find({ collection: 'media', where: { filename: { equals: filename } }, limit: 1 })
@@ -187,7 +191,7 @@ async function run() {
       ...rest,
       description: richText(body ?? []),
       image: image ? await m(image) : undefined,
-      gallery: gallery ? await Promise.all((gallery as string[]).map(async (g) => ({ image: await m(g) }))) : undefined,
+      gallery: gallery && !SKIP_MEDIA ? await Promise.all((gallery as string[]).map(async (g) => ({ image: await m(g) }))) : undefined,
       published: true,
     })
     offeringIds[o.slug] = doc.id
@@ -200,7 +204,7 @@ async function run() {
       mode: 'etranger',
       description: richText(body ?? []),
       image: await m(image),
-      gallery: await Promise.all((gallery as string[]).map(async (g) => ({ image: await m(g) }))),
+      gallery: SKIP_MEDIA ? [] : await Promise.all((gallery as string[]).map(async (g) => ({ image: await m(g) }))),
       itinerary: (itinerary as string[][]).map(([day, title, text]) => ({ day, title, text })),
       included: (included as string[]).map((text) => ({ text })),
       notIncluded: (notIncluded as string[]).map((text) => ({ text })),

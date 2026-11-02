@@ -5,5 +5,5 @@
 import { getSigningSecret } from '../src/lib/mobupay'
 
 const r = await getSigningSecret()
-const secret = r.secret || r.signingSecret
+const secret = r.webhookSecret || r.secret || r.signingSecret
 console.log(secret ? `MOBUPAY_WEBHOOK_SECRET=${secret}` : r)

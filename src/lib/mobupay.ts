@@ -142,7 +142,7 @@ export function cancelPendingPayment(id: string, idempotencyKey: string) {
 }
 
 export function getSigningSecret() {
-  return call<{ secret?: string; signingSecret?: string }>('GET', '/api/v1/webhooks/signing-secret')
+  return call<{ webhookSecret?: string; secret?: string; signingSecret?: string }>('GET', '/api/v1/webhooks/signing-secret')
 }
 
 /** Verify a webhook delivery. Prefers V2 (timestamped, anti-replay); falls back to V1. */
