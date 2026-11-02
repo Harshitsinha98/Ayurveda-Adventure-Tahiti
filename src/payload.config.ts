@@ -18,6 +18,7 @@ import { Occurrences } from './collections/Occurrences'
 import { Offerings } from './collections/Offerings'
 import { CustomerPackages, Packages } from './collections/Packages'
 import { Users } from './collections/Users'
+import { accountEndpoints } from './endpoints/account'
 import { publicEndpoints } from './endpoints/public'
 import { AboutPage, BookingSettings, HomePage, SiteSettings } from './globals'
 import { brevoAdapter } from './lib/payload-email'
@@ -85,7 +86,7 @@ export default buildConfig({
     WebhookEvents,
   ],
   globals: [BookingSettings, HomePage, AboutPage, SiteSettings],
-  endpoints: publicEndpoints,
+  endpoints: [...publicEndpoints, ...accountEndpoints],
   editor: lexicalEditor(),
   // Account verification / password-reset emails go through Brevo (same as the site's transactional emails).
   email: brevoAdapter,
