@@ -1,7 +1,7 @@
 'use client'
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion'
-import { ArrowUpRight, CalendarCheck, Mail } from 'lucide-react'
+import { ArrowUpRight, CalendarCheck, Mail, UserRound } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -78,6 +78,14 @@ export function Header({ email, whatsapp }: { email?: string | null; whatsapp?: 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <LangToggle tone={onDark ? 'dark' : 'light'} />
               <Link
+                href="/compte"
+                aria-label={t.account.menu}
+                title={t.account.menu}
+                className={`hidden h-10 w-10 place-items-center rounded-[2px] border transition-colors sm:grid ${onDark ? 'border-sand-50/30 text-sand-50 hover:border-sand-50/60' : 'border-plum-800/20 text-plum-800 hover:border-plum-800/40'}`}
+              >
+                <UserRound size={18} strokeWidth={1.7} />
+              </Link>
+              <Link
                 href="/offres"
                 className={`btn-fill hidden rounded-[2px] px-5 py-2.5 text-sm font-semibold sm:inline-flex ${onDark ? 'btn-fill-light bg-saffron-500 text-plum-950' : 'bg-plum-800 text-sand-50'}`}
               >
@@ -120,6 +128,14 @@ export function Header({ email, whatsapp }: { email?: string | null; whatsapp?: 
                   </motion.div>
                 </div>
               ))}
+              <div className="overflow-hidden">
+                <motion.div initial={{ y: '110%' }} animate={{ y: '0%' }} transition={{ duration: 0.8, delay: 0.2 + (NAV.length + 1) * 0.06, ease: EASE }}>
+                  <Link href="/compte" className="font-display flex items-center gap-4 py-1 text-[clamp(1.9rem,8.4vw,3rem)] leading-[1.15] hover:text-saffron-300">
+                    <UserRound size={22} strokeWidth={1.6} className="text-saffron-300/80" />
+                    {t.account.menu}
+                  </Link>
+                </motion.div>
+              </div>
             </nav>
             <div className="container-x pb-[max(1.5rem,env(safe-area-inset-bottom))]">
               <p className="eyebrow mb-3 text-[0.6rem] text-sand-200/60">{t.header.quick}</p>
