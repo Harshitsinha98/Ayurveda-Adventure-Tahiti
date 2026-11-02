@@ -1,63 +1,64 @@
 import type { CollectionConfig } from 'payload'
 
 import { staffOnly } from '@/access'
+import { L } from '@/lib/admin-labels'
 
 export const customerGroups = [
-  { label: 'Clients', value: 'clients' },
-  { label: 'Méditation', value: 'meditation' },
-  { label: 'Ayurveda', value: 'ayurveda' },
-  { label: 'Voyages', value: 'voyages' },
-  { label: 'Newsletter', value: 'newsletter' },
-  { label: 'Importé de Wix', value: 'wix' },
+  { label: L('Clients', 'Clients'), value: 'clients' },
+  { label: L('Méditation', 'Meditation'), value: 'meditation' },
+  { label: L('Ayurveda', 'Ayurveda'), value: 'ayurveda' },
+  { label: L('Voyages', 'Journeys'), value: 'voyages' },
+  { label: L('Newsletter', 'Newsletter'), value: 'newsletter' },
+  { label: L('Importé de Wix', 'Imported from Wix'), value: 'wix' },
 ]
 
 /** Customer database (CRM). Contacts are synchronised to Brevo for newsletters. */
 export const Customers: CollectionConfig = {
   slug: 'customers',
-  labels: { singular: 'Client', plural: 'Clients' },
+  labels: { singular: L('Client', 'Client'), plural: L('Clients', 'Clients') },
   admin: {
-    group: 'Clients et newsletter',
+    group: L('Clients et newsletter', 'Clients & newsletter'),
     useAsTitle: 'displayName',
     defaultColumns: ['displayName', 'email', 'phone', 'groups', 'newsletter'],
     listSearchableFields: ['email', 'firstName', 'lastName', 'phone'],
-    description: 'Liste des clients. Export CSV : cochez les fiches puis « Exporter ».',
+    description: L('Liste des clients. Export CSV : cochez les fiches puis « Exporter ».', 'Client list. CSV export: tick the records then “Export”.'),
   },
   access: { read: staffOnly, create: staffOnly, update: staffOnly, delete: staffOnly },
   fields: [
     {
       type: 'row',
       fields: [
-        { name: 'firstName', label: 'Prénom', type: 'text' },
-        { name: 'lastName', label: 'Nom', type: 'text' },
+        { name: 'firstName', label: L('Prénom', 'First name'), type: 'text' },
+        { name: 'lastName', label: L('Nom', 'Last name'), type: 'text' },
       ],
     },
     {
       type: 'row',
       fields: [
-        { name: 'email', label: 'E-mail', type: 'email', required: true, unique: true, index: true },
-        { name: 'phone', label: 'Téléphone', type: 'text' },
+        { name: 'email', label: L('E-mail', 'Email'), type: 'email', required: true, unique: true, index: true },
+        { name: 'phone', label: L('Téléphone', 'Phone'), type: 'text' },
       ],
     },
-    { name: 'country', label: 'Pays', type: 'text' },
-    { name: 'groups', label: 'Groupes', type: 'select', hasMany: true, options: customerGroups },
+    { name: 'country', label: L('Pays', 'Country'), type: 'text' },
+    { name: 'groups', label: L('Groupes', 'Groups'), type: 'select', hasMany: true, options: customerGroups },
     {
       name: 'newsletter',
-      label: 'Accepte la newsletter',
+      label: L('Accepte la newsletter', 'Accepts the newsletter'),
       type: 'checkbox',
       defaultValue: false,
-      admin: { description: 'Uniquement avec le consentement de la personne.' },
+      admin: { description: L('Uniquement avec le consentement de la personne.', 'Only with the person’s consent.') },
     },
-    { name: 'consentAt', label: 'Consentement donné le', type: 'date', admin: { readOnly: true } },
-    { name: 'notes', label: 'Notes', type: 'textarea' },
+    { name: 'consentAt', label: L('Consentement donné le', 'Consent given on'), type: 'date', admin: { readOnly: true } },
+    { name: 'notes', label: L('Notes', 'Notes'), type: 'textarea' },
     {
       name: 'source',
-      label: 'Origine',
+      label: L('Origine', 'Source'),
       type: 'select',
       defaultValue: 'site',
       options: [
-        { label: 'Site internet', value: 'site' },
-        { label: 'Ajout manuel', value: 'manuel' },
-        { label: 'Import Wix', value: 'wix' },
+        { label: L('Site internet', 'Website'), value: 'site' },
+        { label: L('Ajout manuel', 'Manual entry'), value: 'manuel' },
+        { label: L('Import Wix', 'Wix import'), value: 'wix' },
       ],
       admin: { position: 'sidebar' },
     },
@@ -71,7 +72,7 @@ export const Customers: CollectionConfig = {
     },
     {
       name: 'bookings',
-      label: 'Réservations',
+      label: L('Réservations', 'Bookings'),
       type: 'join',
       collection: 'bookings',
       on: 'customer',

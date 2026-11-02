@@ -50,6 +50,7 @@ export default buildConfig({
         Logo: '/components/admin/Brand#Logo',
         Icon: '/components/admin/Brand#Icon',
       },
+      actions: ['/components/admin/LanguageSwitch#LanguageSwitch'],
       beforeDashboard: ['/components/admin/Dashboard#Dashboard'],
     },
     dateFormat: 'd MMMM yyyy',

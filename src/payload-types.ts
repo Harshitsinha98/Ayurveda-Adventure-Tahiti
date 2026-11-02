@@ -170,7 +170,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Toutes les réservations. Pour une réservation reçue par téléphone ou en personne : « Créer nouveau ».
+ * All bookings. For a booking taken by phone or in person: use “Create new”.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "bookings".
@@ -198,7 +198,7 @@ export interface Booking {
   customerEmail?: string | null;
   customerPhone?: string | null;
   /**
-   * Utilisé pour afficher l’heure locale dans les e-mails.
+   * Used to display the local time in emails.
    */
   timezone?: string | null;
   amountTotal: number;
@@ -216,7 +216,7 @@ export interface Booking {
       }[]
     | null;
   /**
-   * Les paiements en ligne s’ajoutent automatiquement. Ajoutez ici un paiement en espèces, virement ou carte sur place.
+   * Online payments are added automatically. Add a cash, bank transfer or on-site card payment here.
    */
   payments?:
     | {
@@ -244,7 +244,7 @@ export interface Booking {
   createdAt: string;
 }
 /**
- * Séances, formations, ateliers, conférences et voyages. Les dates se gèrent dans « Dates et sessions ».
+ * Sessions, courses, workshops, talks and journeys. Dates are managed in “Dates & sessions”.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "offerings".
@@ -255,7 +255,7 @@ export interface Offering {
   kind: 'seance' | 'formation' | 'atelier' | 'conference' | 'voyage';
   mode?: ('presentiel' | 'en-ligne' | 'hybride' | 'etranger') | null;
   /**
-   * Ex. « Un premier échange »
+   * E.g. “A first conversation”
    */
   kicker?: string | null;
   summary: string;
@@ -288,13 +288,13 @@ export interface Offering {
       }[]
     | null;
   /**
-   * Blocs libres affichés sur la page, par ex. « Hébergement au cœur de la Kumbha Mela » ou « Bon à savoir » : un titre, un texte et, si besoin, une liste à puces.
+   * Free-form blocks shown on the page, e.g. “Accommodation at the heart of the Kumbha Mela” or “Good to know”: a title, some text and, if needed, a bullet list.
    */
   sections?:
     | {
         title: string;
         /**
-         * Laisser une ligne vide entre deux paragraphes.
+         * Leave a blank line between two paragraphs.
          */
         text?: string | null;
         items?:
@@ -307,17 +307,17 @@ export interface Offering {
       }[]
     | null;
   /**
-   * 0 = gratuit. Laisser vide si prix sur demande.
+   * 0 = free. Leave empty if price on request.
    */
   price?: number | null;
   durationMinutes?: number | null;
   /**
-   * Ex. « hors vols Papeete – Delhi »
+   * E.g. “excluding Papeete – Delhi flights”
    */
   priceNote?: string | null;
   bookingMode: 'online' | 'free' | 'request' | 'closed';
   /**
-   * Ex. tarif réduit, tarif membre. Le client choisit au moment de réserver.
+   * E.g. reduced rate, member rate. The client chooses when booking.
    */
   priceOptions?:
     | {
@@ -327,7 +327,7 @@ export interface Offering {
       }[]
     | null;
   /**
-   * Ex. extension Agra, chambre individuelle.
+   * E.g. Agra extension, single room.
    */
   extras?:
     | {
@@ -338,35 +338,35 @@ export interface Offering {
       }[]
     | null;
   /**
-   * Au-delà de 1, le client peut réserver pour un groupe.
+   * Above 1, the client can book for a group.
    */
   maxPerBooking?: number | null;
   /**
-   * Vide ou 0 = paiement total. Ex. 30 pour un acompte de 30 %.
+   * Empty or 0 = full payment. E.g. 30 for a 30% deposit.
    */
   depositPercent?: number | null;
   balanceDueDaysBefore?: number | null;
   creditEligible?: boolean | null;
   cancellationPolicy?: string | null;
   /**
-   * Ex. Punaauia. Pour une séance en ligne : lien envoyé après réservation.
+   * E.g. Punaauia. For an online session: link sent after booking.
    */
   location?: string | null;
   /**
-   * Envoyé uniquement dans l’e-mail de confirmation.
+   * Sent only in the confirmation email.
    */
   meetingUrl?: string | null;
   tripStart?: string | null;
   tripEnd?: string | null;
   /**
-   * Ex. Himalaya · Uttarakhand
+   * E.g. Himalaya · Uttarakhand
    */
   tripRegion?: string | null;
   guide?: string | null;
   itinerary?:
     | {
         /**
-         * Ex. « Jour 1 · 26.02 »
+         * E.g. “Day 1 · 26.02”
          */
         day: string;
         title: string;
@@ -387,11 +387,11 @@ export interface Offering {
       }[]
     | null;
   /**
-   * Affichée sur la page du voyage si renseignée.
+   * Shown on the journey page if provided.
    */
   presentationUrl?: string | null;
   /**
-   * Facultatif. Sinon, le titre et le résumé sont utilisés.
+   * Optional. Otherwise the title and summary are used.
    */
   seo?: {
     title?: string | null;
@@ -399,7 +399,7 @@ export interface Offering {
     image?: (number | null) | Media;
   };
   /**
-   * Rempli automatiquement depuis le titre. À modifier seulement si nécessaire.
+   * Filled automatically from the title. Only change if needed.
    */
   slug?: string | null;
   published?: boolean | null;
@@ -409,7 +409,7 @@ export interface Offering {
   createdAt: string;
 }
 /**
- * Photos et images du site.
+ * Website photos and images.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -457,7 +457,7 @@ export interface Media {
   };
 }
 /**
- * Créer, modifier, dupliquer ou annuler une date. « Dupliquer » se trouve dans le menu ⋯ de la fiche.
+ * Create, edit, duplicate or cancel a date. “Duplicate” is in the ⋯ menu of the record.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "occurrences".
@@ -468,7 +468,7 @@ export interface Occurrence {
   startsAt: string;
   endsAt?: string | null;
   /**
-   * Facultatif : liste des dates si la formation se déroule sur plusieurs jours.
+   * Optional: list of dates if the course runs over several days.
    */
   schedule?:
     | {
@@ -479,7 +479,7 @@ export interface Occurrence {
     | null;
   capacity: number;
   /**
-   * Calculé automatiquement.
+   * Calculated automatically.
    */
   seatsReserved?: number | null;
   location?: string | null;
@@ -491,7 +491,7 @@ export interface Occurrence {
   createdAt: string;
 }
 /**
- * Liste des clients. Export CSV : cochez les fiches puis « Exporter ».
+ * Client list. CSV export: tick the records then “Export”.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "customers".
@@ -505,7 +505,7 @@ export interface Customer {
   country?: string | null;
   groups?: ('clients' | 'meditation' | 'ayurveda' | 'voyages' | 'newsletter' | 'wix')[] | null;
   /**
-   * Uniquement avec le consentement de la personne.
+   * Only with the person’s consent.
    */
   newsletter?: boolean | null;
   consentAt?: string | null;
@@ -521,7 +521,7 @@ export interface Customer {
   createdAt: string;
 }
 /**
- * Crédits restants de chaque client. Vous pouvez ajouter ou retirer des crédits à la main.
+ * Remaining credits for each client. You can add or remove credits by hand.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "customer-packages".
@@ -552,11 +552,11 @@ export interface Package {
   price: number;
   validityMonths: number;
   /**
-   * Séances qui peuvent être réservées avec ce carnet.
+   * Sessions that can be booked with this package.
    */
   appliesTo?: (number | Offering)[] | null;
   /**
-   * Rempli automatiquement depuis le titre. À modifier seulement si nécessaire.
+   * Filled automatically from the title. Only change if needed.
    */
   slug?: string | null;
   published?: boolean | null;
@@ -565,7 +565,7 @@ export interface Package {
   createdAt: string;
 }
 /**
- * Inscriptions depuis le site. Les newsletters se créent et s’envoient dans Brevo (lien dans le tableau de bord).
+ * Sign-ups from the website. Newsletters are created and sent in Brevo (link on the dashboard).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "subscribers".
@@ -599,7 +599,7 @@ export interface Message {
   createdAt: string;
 }
 /**
- * Écrire, programmer et publier les articles du blog.
+ * Write, schedule and publish blog articles.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
@@ -625,7 +625,7 @@ export interface Post {
     [k: string]: unknown;
   };
   /**
-   * Facultatif. Sinon, le titre et le résumé sont utilisés.
+   * Optional. Otherwise the title and summary are used.
    */
   seo?: {
     title?: string | null;
@@ -633,7 +633,7 @@ export interface Post {
     image?: (number | null) | Media;
   };
   /**
-   * Rempli automatiquement depuis le titre. À modifier seulement si nécessaire.
+   * Filled automatically from the title. Only change if needed.
    */
   slug?: string | null;
   publishedAt?: string | null;
@@ -651,7 +651,7 @@ export interface Category {
   id: number;
   title: string;
   /**
-   * Rempli automatiquement depuis le titre. À modifier seulement si nécessaire.
+   * Filled automatically from the title. Only change if needed.
    */
   slug?: string | null;
   updatedAt: string;
@@ -665,12 +665,12 @@ export interface Testimonial {
   id: number;
   quote: string;
   /**
-   * Courte citation en grand.
+   * Short quote shown large.
    */
   highlight?: string | null;
   name: string;
   /**
-   * Ex. « Formation Ayurveda Santé »
+   * E.g. “Ayurveda Health training”
    */
   context?: string | null;
   published?: boolean | null;
@@ -1563,7 +1563,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
- * Horaires des séances individuelles (heure de Tahiti), congés et règles de réservation.
+ * Individual session hours (Tahiti time), time off and booking rules.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "booking-settings".
