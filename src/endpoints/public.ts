@@ -84,12 +84,13 @@ export const publicEndpoints: Endpoint[] = [
     method: 'post',
     handler: async (req) => {
       const raw = await req.text!()
-      const secret = process.env.MOBUPAY_WEBHOOK_SECRET
-      if (!secret) {
+      // Comma-separated: the registered endpoint and the merchant (per-payment notificationUrl) sign with different secrets.
+      const secrets = (process.env.MOBUPAY_WEBHOOK_SECRET || '').split(',').map((x) => x.trim()).filter(Boolean)
+      if (!secrets.length) {
         req.payload.logger.error('MOBUPAY_WEBHOOK_SECRET manquant')
         return json({ error: 'not configured' }, 500)
       }
-      if (!verifyWebhook(raw, req.headers, secret)) return json({ error: 'invalid signature' }, 401)
+      if (!secrets.some((s) => verifyWebhook(raw, req.headers, s))) return json({ error: 'invalid signature' }, 401)
       const event = JSON.parse(raw) as MobupayEvent
       const deliveryId = event.id || req.headers.get('x-mobupay-delivery-id') || ''
       // Idempotency: the unique eventId makes a second delivery a no-op.
