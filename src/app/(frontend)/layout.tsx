@@ -65,7 +65,7 @@ export default async function FrontendLayout({ children }: { children: React.Rea
         <MotionProvider>
           <SmoothScroll>
             <Preloader />
-            <Header />
+            <Header email={site.email} whatsapp={site.whatsapp} />
             <main id="contenu" className="relative z-[1] bg-sand-100">{children}</main>
             <Footer />
             <WhatsAppButton number={site.whatsapp} />

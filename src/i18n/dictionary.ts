@@ -8,7 +8,7 @@ export const dateLocale = (l: Lang) => (l === 'en' ? 'en-GB' : 'fr-FR')
 
 const fr = {
   nav: { home: 'Accueil', offers: 'Offres', trips: 'Voyages en Inde', events: 'Événements', blog: 'Blog', about: 'À propos', contact: 'Contact' },
-  header: { book: 'Réserver', home: 'Ayurveda Tahiti, accueil', mainNav: 'Navigation principale', openMenu: 'Ouvrir le menu', closeMenu: 'Fermer le menu', menu: 'Menu', menuFoot: 'Punaauia · Tahiti · en ligne partout dans le monde', skip: 'Aller au contenu', lang: 'Langue' },
+  header: { book: 'Réserver', home: 'Ayurveda Tahiti, accueil', mainNav: 'Navigation principale', openMenu: 'Ouvrir le menu', closeMenu: 'Fermer le menu', menu: 'Menu', menuFoot: 'Punaauia · Tahiti · en ligne partout dans le monde', skip: 'Aller au contenu', lang: 'Langue', tileEmail: 'Envoyer un e-mail', tileWhatsapp: 'Écrire sur WhatsApp', tileBook: 'Réserver maintenant', quick: 'Contact rapide' },
   footer: {
     newsletter: 'Newsletter',
     title: 'Ateliers, formations et voyages,',
@@ -368,7 +368,7 @@ export type Dict = typeof fr
 
 const en: Dict = {
   nav: { home: 'Home', offers: 'Offerings', trips: 'Journeys to India', events: 'Events', blog: 'Blog', about: 'About', contact: 'Contact' },
-  header: { book: 'Book', home: 'Ayurveda Tahiti, home', mainNav: 'Main navigation', openMenu: 'Open menu', closeMenu: 'Close menu', menu: 'Menu', menuFoot: 'Punaauia · Tahiti · online, anywhere in the world', skip: 'Skip to content', lang: 'Language' },
+  header: { book: 'Book', home: 'Ayurveda Tahiti, home', mainNav: 'Main navigation', openMenu: 'Open menu', closeMenu: 'Close menu', menu: 'Menu', menuFoot: 'Punaauia · Tahiti · online, anywhere in the world', skip: 'Skip to content', lang: 'Language', tileEmail: 'Send an email', tileWhatsapp: 'Chat on WhatsApp', tileBook: 'Book now', quick: 'Quick contact' },
   footer: {
     newsletter: 'Newsletter',
     title: 'Workshops, courses and journeys,',
